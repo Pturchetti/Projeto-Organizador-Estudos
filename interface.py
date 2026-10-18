@@ -38,8 +38,9 @@ def carregar_imagens():
     global imagem_botao_historico
     global imagem_botao_estatisticas
     global imagem_botao_sair
+    global imagem_fundo
 
-
+    imagem_fundo = tk.PhotoImage(file="imagens/background.png")
     imagem_botao_materias = tk.PhotoImage(file="imagens/botao_materias.png")
     imagem_tela_inicial = tk.PhotoImage(file="imagens/tela_inicial.png")
     imagem_botao_inicio = tk.PhotoImage(file="imagens/botao_inicio.png")
@@ -54,32 +55,56 @@ janela = None
 
 
 def interface(tela,mudar_tela):
+    
+
     if tela == 1:
         fundo = tk.Label(janela,bg=cor_fundo,image=imagem_tela_inicial)
         fundo.place(x=0,y=0)
         
-        botao_inicio = tk.Button(janela,image=imagem_botao_inicio,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(1))
-        botao_inicio.place(relx = 0.1, rely = 0.15,anchor="center")
+    elif tela == 2:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
+    elif tela ==3:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
+    elif tela ==4:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
+    elif tela ==5:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
+    elif tela ==6:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
+    elif tela ==7:
+        background = tk.Label(janela,image=imagem_fundo)
+        background.place(x=0,y=0)
 
-        botao_materias = tk.Button(janela,image=imagem_botao_materias,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(2))
-        botao_materias.place(relx = 0.1, rely = 0.22,anchor="center")
 
-        botao_tarefas = tk.Button(janela,image=imagem_botao_tarefas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(3))
-        botao_tarefas.place(relx = 0.1, rely = 0.29,anchor="center")
+        
+    botao_inicio = tk.Button(janela,image=imagem_botao_inicio,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(1))
+    botao_inicio.place(relx = 0.1, rely = 0.15,anchor="center")
 
-        botao_planejamento=tk.Button(janela,image=imagem_botao_planejamento,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(4))
-        botao_planejamento.place(relx = 0.1, rely = 0.36,anchor="center")
+    botao_materias = tk.Button(janela,image=imagem_botao_materias,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(2))
+    botao_materias.place(relx = 0.1, rely = 0.22,anchor="center")
 
-        botao_cronometro=tk.Button(janela,image=imagem_botao_cronometro,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(5))
-        botao_cronometro.place(relx = 0.1, rely = 0.43,anchor="center")
+    botao_tarefas = tk.Button(janela,image=imagem_botao_tarefas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(3))
+    botao_tarefas.place(relx = 0.1, rely = 0.29,anchor="center")
 
-        botao_historico=tk.Button(janela,image=imagem_botao_historico,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(6))
-        botao_historico.place(relx = 0.1, rely = 0.50,anchor="center")
+    botao_planejamento=tk.Button(janela,image=imagem_botao_planejamento,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(4))
+    botao_planejamento.place(relx = 0.1, rely = 0.36,anchor="center")
 
-        botao_estatisticas=tk.Button(janela,image=imagem_botao_estatisticas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(7))
-        botao_estatisticas.place(relx = 0.1, rely = 0.57,anchor="center")
+    botao_cronometro=tk.Button(janela,image=imagem_botao_cronometro,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(5))
+    botao_cronometro.place(relx = 0.1, rely = 0.43,anchor="center")
 
-        botao_sair=tk.Button(janela,image=imagem_botao_sair,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(-1))
-        botao_sair.place(relx = 0.1, rely = 0.9,anchor="center")
+    botao_historico=tk.Button(janela,image=imagem_botao_historico,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(6))
+    botao_historico.place(relx = 0.1, rely = 0.50,anchor="center")
+
+    botao_estatisticas=tk.Button(janela,image=imagem_botao_estatisticas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(7))
+    botao_estatisticas.place(relx = 0.1, rely = 0.57,anchor="center")
+
+    botao_sair=tk.Button(janela,image=imagem_botao_sair,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(-1))
+    botao_sair.place(relx = 0.1, rely = 0.9,anchor="center")
+    
 
         
