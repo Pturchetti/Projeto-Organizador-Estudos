@@ -4,7 +4,7 @@ import interface
 
 
 tela = 1 
-def mudar_tela(nova_tela, dificuldade=None):
+def mudar_tela(nova_tela):
     global tela
 
     if nova_tela == -1: 
@@ -13,10 +13,10 @@ def mudar_tela(nova_tela, dificuldade=None):
 
     tela = nova_tela 
 
-    for widget in interface.janela.winfo_children():
+    for widget in interface.resto_tela.winfo_children():
         widget.destroy()
 
-    interface.interface(tela,mudar_tela)
+    interface.interface(tela)
 
 interface.janela = tk.Tk()
 interface.carregar_imagens()
@@ -24,5 +24,8 @@ interface.janela.geometry(f"{interface.largura}x{interface.altura}")
 interface.janela.resizable(False, False)
 interface.janela.configure(bg=interface.cor_fundo)
 
-interface.interface(tela, mudar_tela)
+
+interface.carregar_menu(mudar_tela)
+interface.carregar_conteudo()
+interface.interface(tela)
 interface.janela.mainloop()
