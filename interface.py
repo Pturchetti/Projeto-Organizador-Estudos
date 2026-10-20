@@ -1,6 +1,7 @@
 
 import tkinter as tk
-
+from tkinter import messagebox
+import gerenciamento_materias
 
 #PROPORÇÕES
 largura = 1600
@@ -8,8 +9,8 @@ altura = 900
 
 
 #FONTES
-fonte_titulo = ("Inter",16,"bold")
-
+fonte_titulo = ("Inter",18,"bold")
+fonte_palavras = ("Inter",12,"bold")
 
 #CORES
 cor_fundo = ("#e4ebf1")
@@ -28,6 +29,11 @@ cor_fundo_botao = ("#050f44")
 #tela 7 -estatísticas
 
 
+janela = None
+resto_tela = None
+nome_materia = None
+id_materia = None
+
 def carregar_imagens():
     global imagem_tela_inicial
     global imagem_botao_inicio
@@ -45,8 +51,15 @@ def carregar_imagens():
     global imagem_botao_reload
     global imagem_botao_pomodoro
     global imagem_tela_cronometro
+    global imagem_tela_materias
+    global imagem_botao_cadastro_materias
+    global imagem_tela_cadastro_materia
+    global imagem_botao_confirmar
 
-
+    imagem_botao_confirmar = tk.PhotoImage(file="imagens/botao_confirmar.png")
+    imagem_tela_cadastro_materia = tk.PhotoImage(file="imagens/tela_cadastro_materia.png")
+    imagem_tela_materias = tk.PhotoImage(file="imagens/tela_materias.png")
+    imagem_botao_cadastro_materias = tk.PhotoImage(file="imagens/botao_cadastrar_materia.png")
     imagem_tela_cronometro = tk.PhotoImage(file="imagens/tela_cronometro.png")
     imagem_botao_pomodoro = tk.PhotoImage(file="imagens/botao_pomodoro.png")
     imagem_botao_reload = tk.PhotoImage(file="imagens/botao_reload.png")
@@ -64,16 +77,13 @@ def carregar_imagens():
     imagem_botao_estatisticas = tk.PhotoImage(file="imagens/botao_estatisticas.png")
     imagem_botao_sair = tk.PhotoImage(file="imagens/botao_sair.png")
 
-janela = None
-resto_tela = None
+
 
 def carregar_telas():
     global resto_tela
 
     resto_tela = tk.Frame(janela,bg=cor_fundo)
     resto_tela.place(relx=0.2,rely=0,relwidth=0.8,relheight=1)
-
-
 
 def carregar_menu(mudar_tela):
     menu = tk.Frame(janela,bg=cor_fundo)
@@ -107,15 +117,57 @@ def carregar_menu(mudar_tela):
     botao_sair=tk.Button(menu,image=imagem_botao_sair,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(-1))
     botao_sair.place(relx = 0.1, rely = 0.9)
 
-def interface(tela):
+
+
+def cadastrar_nova_materia(materias):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+
+    tela_cadastro_materia = tk.Label(resto_tela,image=imagem_tela_cadastro_materia)
+    tela_cadastro_materia.place(x=0,y=0)
+
+    entrada_nome = tk.Entry(resto_tela,font=("Inter",12))
+    entrada_nome.place(x=300,y=200)
+
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.cadastrar_materia(materias,entrada_nome.get()),interface(2,materias)))
+    botao_confirmar.place(x=500,y=650)
+
+def mostrar_materias(materias):
+    lista_materias = gerenciamento_materias.listar_materias(materias)
+
+    for i, materia in enumerate(lista_materias):
+        botao_materia = tk.Button(resto_tela,text=materia["nome"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda m=materia: (nome_materia.config(text=f"Nome: {m['nome']}"),print_id_materia.config(text=f"Id: {m['id']}")))
+        botao_materia.place(x=40,y=100+i*40)
+
+def interface(tela,materias=None):
+    global nome_materia
+    global print_id_materia
+
 
     if tela == 1:
         fundo = tk.Label(resto_tela,bg=cor_fundo,image=imagem_tela_inicial)
         fundo.place(x=0,y=0)
         
     elif tela == 2:
-        background = tk.Label(resto_tela,image=imagem_fundo)
-        background.place(x=0,y=0)
+        
+        
+
+        painel_materias = tk.Label(resto_tela,image=imagem_tela_materias)
+        painel_materias.place(x=0,y=0)
+
+        botao_cadastro_materias = tk.Button(resto_tela,image=imagem_botao_cadastro_materias,relief="flat",bd=0,highlightthickness=0,command=lambda:cadastrar_nova_materia(materias))
+        botao_cadastro_materias.place(relx=0.045,rely=0.85)
+
+        nome_materia = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
+        nome_materia.place(x=500,y=100)
+
+        print_id_materia = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
+        print_id_materia.place(x=500,y=150)
+
+        mostrar_materias(materias)
+
+        
     elif tela ==3:
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)
