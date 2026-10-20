@@ -40,7 +40,18 @@ def carregar_imagens():
     global imagem_botao_sair
     global imagem_fundo
     global imagem_menu_lateral
+    global imagem_balao_tarefas
+    global imagem_botao_pause
+    global imagem_botao_reload
+    global imagem_botao_pomodoro
+    global imagem_tela_cronometro
 
+
+    imagem_tela_cronometro = tk.PhotoImage(file="imagens/tela_cronometro.png")
+    imagem_botao_pomodoro = tk.PhotoImage(file="imagens/botao_pomodoro.png")
+    imagem_botao_reload = tk.PhotoImage(file="imagens/botao_reload.png")
+    imagem_botao_pause = tk.PhotoImage(file="imagens/botao_pause.png")
+    imagem_balao_tarefas = tk.PhotoImage(file="imagens/botao_tarefas.png")
     imagem_menu_lateral = tk.PhotoImage(file="imagens/menu_lateral.png")
     imagem_fundo = tk.PhotoImage(file="imagens/background.png")
     imagem_botao_materias = tk.PhotoImage(file="imagens/botao_materias.png")
@@ -56,7 +67,7 @@ def carregar_imagens():
 janela = None
 resto_tela = None
 
-def carregar_conteudo():
+def carregar_telas():
     global resto_tela
 
     resto_tela = tk.Frame(janela,bg=cor_fundo)
@@ -112,8 +123,16 @@ def interface(tela):
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)
     elif tela ==5:
-        background = tk.Label(resto_tela,image=imagem_fundo)
+        background = tk.Label(resto_tela,image=imagem_tela_cronometro)
         background.place(x=0,y=0)
+
+        botao_pause = tk.Button(resto_tela,image=imagem_botao_pause)
+        botao_pause.place(relx=0.44,rely=0.2)
+
+        botao_reload = tk.Button(resto_tela,image=imagem_botao_reload)
+        botao_reload.place(relx=0.24,rely=0.2)
+        botao_pomodoro = tk.Button(resto_tela,image=imagem_botao_pomodoro)
+        botao_pomodoro.place(relx=0.64,rely=0.2)
     elif tela ==6:
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)

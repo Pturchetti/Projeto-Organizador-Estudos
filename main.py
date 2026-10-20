@@ -26,6 +26,6 @@ interface.janela.configure(bg=interface.cor_fundo)
 
 
 interface.carregar_menu(mudar_tela)
-interface.carregar_conteudo()
+interface.carregar_telas()
 interface.interface(tela)
 interface.janela.mainloop()
