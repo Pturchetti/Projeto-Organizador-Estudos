@@ -56,7 +56,16 @@ def carregar_imagens():
     global imagem_botao_cadastro_materias
     global imagem_tela_cadastro_materia
     global imagem_botao_confirmar
+    global imagem_botao_editar_materia
+    global imagem_botao_remover_materia
+    global imagem_tela_procura
+    global imagem_tela_edicao
 
+
+    imagem_botao_editar_materia = tk.PhotoImage(file="imagens/botao_editar_materia.png")
+    imagem_botao_remover_materia = tk.PhotoImage(file="imagens/botao_remover_materia.png")
+    imagem_tela_procura = tk.PhotoImage(file="imagens/tela_procura.png")
+    imagem_tela_edicao = tk.PhotoImage(file="imagens/tela_edicao.png")
     imagem_botao_confirmar = tk.PhotoImage(file="imagens/botao_confirmar.png")
     imagem_tela_cadastro_materia = tk.PhotoImage(file="imagens/tela_cadastro_materia.png")
     imagem_tela_materias = tk.PhotoImage(file="imagens/tela_materias.png")
@@ -118,7 +127,37 @@ def carregar_menu(mudar_tela):
     botao_sair=tk.Button(menu,image=imagem_botao_sair,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(-1))
     botao_sair.place(relx = 0.1, rely = 0.9)
 
+def remover_materia_tela(materias):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
 
+    tela_procura = tk.Label(resto_tela,image=imagem_tela_procura)
+    tela_procura.place(x=0,y=0)
+
+    entrada_id = tk.Entry(resto_tela,font=fonte_palavras)
+    entrada_id.place(x=70,y=200)
+
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.remover_materia(materias,int(entrada_id.get())),interface(2,materias)))
+    botao_confirmar.place(x=500,y=650)
+
+def editar_materia_tela(materias):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+    tela_edicao = tk.Label(resto_tela,image=imagem_tela_edicao)
+    tela_edicao.place(x=0,y=0)
+
+    entrada_id = tk.Entry(resto_tela,font=fonte_palavras)
+    entrada_id.place(x=70,y=100)
+
+    entrada_nome = tk.Entry(resto_tela,font=fonte_palavras)
+    entrada_nome.place(x=200,y=205)
+
+    entrada_descricao = tk.Entry(resto_tela,font=fonte_palavras)
+    entrada_descricao.place(x=250,y=320)
+
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.editar_materia(materias,int(entrada_id.get()),entrada_nome.get(),entrada_descricao.get()),interface(2,materias)))
+    botao_confirmar.place(x=500,y=650)
 
 def cadastrar_nova_materia(materias):
     for widget in resto_tela.winfo_children():
@@ -159,6 +198,12 @@ def interface(tela,materias=None):
 
         painel_materias = tk.Label(resto_tela,image=imagem_tela_materias)
         painel_materias.place(x=0,y=0)
+
+        botao_editar_materia = tk.Button(resto_tela,image=imagem_botao_editar_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: editar_materia_tela(materias))
+        botao_editar_materia.place(relx=0.045,rely=0.70)
+
+        botao_remover_materia = tk.Button(resto_tela,image=imagem_botao_remover_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: remover_materia_tela(materias))
+        botao_remover_materia.place(relx=0.045,rely=0.775)
 
         botao_cadastro_materias = tk.Button(resto_tela,image=imagem_botao_cadastro_materias,relief="flat",bd=0,highlightthickness=0,command=lambda:cadastrar_nova_materia(materias))
         botao_cadastro_materias.place(relx=0.045,rely=0.85)
