@@ -1,16 +1,16 @@
 import tkinter as tk
 import interface
 import gerenciamento_materias
+import persistencia
 
 tela = 1
-materias = [
-    {"id": 1, "nome": "Cálculo B", "descricao": "Estudo de integrais, técnicas de integração e suas aplicações."},
-    {"id": 2, "nome": "Álgebra Linear", "descricao": "Estudo de matrizes, sistemas lineares, vetores e transformações lineares."},
-    {"id": 3, "nome": "Física 1", "descricao": "Estudo da mecânica clássica, incluindo cinemática, leis de Newton e trabalho e energia."}
-]
+materias = persistencia.carregar("materias")
+tarefas = persistencia.carregar("tarefas")
 
 def mudar_tela(nova_tela):
     global tela
+    persistencia.salvar("materias", materias)
+    persistencia.salvar("tarefas", tarefas)
 
     if nova_tela == -1:
         interface.janela.destroy()
