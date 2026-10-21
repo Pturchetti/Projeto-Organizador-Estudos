@@ -33,6 +33,7 @@ janela = None
 resto_tela = None
 nome_materia = None
 id_materia = None
+print_detalhes_materia = None
 
 def carregar_imagens():
     global imagem_tela_inicial
@@ -127,23 +128,26 @@ def cadastrar_nova_materia(materias):
     tela_cadastro_materia = tk.Label(resto_tela,image=imagem_tela_cadastro_materia)
     tela_cadastro_materia.place(x=0,y=0)
 
-    entrada_nome = tk.Entry(resto_tela,font=("Inter",12))
+    entrada_nome = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_nome.place(x=300,y=200)
 
-    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.cadastrar_materia(materias,entrada_nome.get()),interface(2,materias)))
+    entrada_descricao = tk.Entry(resto_tela,font=fonte_palavras)
+    entrada_descricao.place(x=347,y=315)
+
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.cadastrar_materia(materias,entrada_nome.get(),entrada_descricao.get()),interface(2,materias)))    
     botao_confirmar.place(x=500,y=650)
 
 def mostrar_materias(materias):
     lista_materias = gerenciamento_materias.listar_materias(materias)
 
     for i, materia in enumerate(lista_materias):
-        botao_materia = tk.Button(resto_tela,text=materia["nome"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda m=materia: (nome_materia.config(text=f"Nome: {m['nome']}"),print_id_materia.config(text=f"Id: {m['id']}")))
+        botao_materia = tk.Button(resto_tela,text=materia["nome"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda m=materia: (nome_materia.config(text=f"Nome: {m['nome']}"),print_id_materia.config(text=f"Id: {m['id']}"),print_detalhes_materia.config(text=f"Descrição:{m['descricao']}")))
         botao_materia.place(x=40,y=100+i*40)
 
 def interface(tela,materias=None):
     global nome_materia
     global print_id_materia
-
+    global print_detalhes_materia
 
     if tela == 1:
         fundo = tk.Label(resto_tela,bg=cor_fundo,image=imagem_tela_inicial)
@@ -165,6 +169,8 @@ def interface(tela,materias=None):
         print_id_materia = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
         print_id_materia.place(x=500,y=150)
 
+        print_detalhes_materia = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca,wraplength=400,justify="left")
+        print_detalhes_materia.place(x=500,y=200)
         mostrar_materias(materias)
 
         

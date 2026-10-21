@@ -12,7 +12,7 @@ def cadastrar_materia(materias, nome, descricao = ""):
     for materia in materias:
         if materia["id"] >= novo_id:
             novo_id = materia["id"] + 1
-    nova_materia = {"id" : novo_id, "nome" : nome, "descricao:" : descricao}
+    nova_materia = {"id" : novo_id, "nome" : nome, "descricao" : descricao}
     materias.append(nova_materia)
     return nova_materia
 

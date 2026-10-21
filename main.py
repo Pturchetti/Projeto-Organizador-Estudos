@@ -4,9 +4,9 @@ import gerenciamento_materias
 
 tela = 1
 materias = [
-    {"id": 1, "nome": "Cálculo B"},
-    {"id": 2, "nome": "Álgebra Linear"},
-    {"id": 3, "nome": "Física 1"}
+    {"id": 1, "nome": "Cálculo B", "descricao": "Estudo de integrais, técnicas de integração e suas aplicações."},
+    {"id": 2, "nome": "Álgebra Linear", "descricao": "Estudo de matrizes, sistemas lineares, vetores e transformações lineares."},
+    {"id": 3, "nome": "Física 1", "descricao": "Estudo da mecânica clássica, incluindo cinemática, leis de Newton e trabalho e energia."}
 ]
 
 def mudar_tela(nova_tela):
