@@ -14,7 +14,7 @@ def mudar_tela(nova_tela):
     persistencia.salvar("materias", materias)
     persistencia.salvar("tarefas", tarefas)
     persistencia.salvar("historico", dias_historico)
-    interface.encerrar_cronometro()
+    interface.controlar_pomodoro("encerrar")
 
     if nova_tela == -1:
         interface.janela.destroy()
