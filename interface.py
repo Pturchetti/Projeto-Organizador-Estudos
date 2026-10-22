@@ -1,9 +1,11 @@
 
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import gerenciamento_materias
 import historico
 import cronometro
+from datetime import date, datetime, timedelta
+import planejamento_semanal
 
 #PROPORÇÕES
 largura = 1600
@@ -139,6 +141,8 @@ def carregar_imagens():
     global imagem_tela_procura
     global imagem_tela_edicao
     global imagem_tela_historico
+    global imagem_tela_planejamento
+    global imagem_botao_editar_planejamento
 
     imagem_tela_historico = tk.PhotoImage(file="imagens/tela_historico.png")
     imagem_botao_editar_materia = tk.PhotoImage(file="imagens/botao_editar_materia.png")
@@ -165,6 +169,8 @@ def carregar_imagens():
     imagem_botao_historico = tk.PhotoImage(file="imagens/botao_historico.png")
     imagem_botao_estatisticas = tk.PhotoImage(file="imagens/botao_estatisticas.png")
     imagem_botao_sair = tk.PhotoImage(file="imagens/botao_sair.png")
+    imagem_tela_planejamento = tk.PhotoImage(file="imagens/tela_planejamento.png")
+    imagem_botao_editar_planejamento = tk.PhotoImage(file="imagens/botao_editar_planejamento.png")
 
 
 
@@ -267,7 +273,155 @@ def mostrar_historico(dias_historico):
     for i, dia in enumerate(dias_historico):
         botao_dia = tk.Button(resto_tela,text=dia["data"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda d=dia: (nome_dia_historico.config(text=f"Data: {d['data']} - {d['dia_semana']}"),horas_historico.config(text=f"Tempo estudado: {d['horas_estudadas']}"),tarefas_historico.config(text=f"Tarefas concluídas: {len(d['tarefas_feitas'])}"),sessoes_historico.config(text=f"Sessões Pomodoro concluídas: {d.get('sessoes_pomodoro', 0)}")))
         botao_dia.place(x=40,y=100+i*40)
-    
+
+
+def editar_dia_planejamento(data, materias):
+    janela_edicao = tk.Toplevel(janela)
+    janela_edicao.title("Planejamento do dia")
+    janela_edicao.geometry("650x500")
+    janela_edicao.configure(bg=cor_fundo)
+
+    meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"    ]
+    data_obj = datetime.strptime(data, "%Y-%m-%d")
+    tk.Label(janela_edicao,text=f"{data_obj.day} de {meses[data_obj.month - 1]} de {data_obj.year}",font=("Inter", 18, "bold"),bg=cor_fundo).pack(pady=12)
+    tk.Label(janela_edicao,text="Planejamentos:",font=("Inter", 14, "bold"),bg=cor_fundo).pack()
+    lista_frame = tk.Frame(janela_edicao, bg=cor_fundo)
+    lista_frame.pack(fill="both", expand=True, padx=15, pady=10)
+
+    def atualizar_lista():
+        for widget in lista_frame.winfo_children():
+            widget.destroy()
+
+        lista = planejamento_semanal.listar_dia(data)
+
+        if not lista:
+            tk.Label(
+                lista_frame,
+                text="Nada previsto.",
+                bg=cor_fundo,
+                font=("Inter", 12)
+            ).pack(pady=10)
+            return
+
+        for p in lista:
+            materia = gerenciamento_materias.buscar_materia(
+                materias, p["materia_id"]
+            )
+            nome = materia["nome"] if materia else "Matéria removida"
+
+            linha = tk.Frame(lista_frame, bg=cor_branca)
+            linha.pack(fill="x", pady=4)
+
+            texto = (
+                f'{p["horario"]} | {nome} | '
+                f'{p["duracao"]} min\n{p["descricao"]}'
+            )
+
+            tk.Label(linha,text=texto,bg=cor_branca,justify="left",anchor="w").pack(side="left", padx=8, pady=6, fill="x", expand=True)
+            tk.Button(linha,text="Remover",command=lambda item=p: remover(item)).pack(side="right", padx=8)
+
+        def remover(p):
+            if messagebox.askyesno(
+            "Confirmar",
+            "Deseja remover este planejamento?",
+            parent=janela_edicao
+            ):
+                planejamento_semanal.remover_planejamento(p["id"])
+
+            janela_edicao.destroy()
+
+            for widget in resto_tela.winfo_children():
+                widget.destroy()
+
+            interface(4, materias)
+
+    def adicionar():
+        if not materias:
+            messagebox.showerror(
+                "Sem matérias",
+                "Cadastre uma matéria antes de planejar.",
+                parent=janela_edicao
+            )
+            return
+
+        formulario = tk.Toplevel(janela_edicao)
+        formulario.title("Adicionar planejamento")
+        formulario.geometry("350x390")
+        formulario.configure(bg=cor_fundo)
+
+        # Horário
+        tk.Label(formulario,text="Horário",bg=cor_fundo).pack(pady=(10, 0))
+
+        horarios = [
+            f"{h:02d}:{m:02d}"
+            for h in range(24)
+            for m in range(0, 60, 15)
+        ]
+
+        horario_var = tk.StringVar(value="08:00")
+
+        seletor_horario = ttk.Combobox(formulario,textvariable=horario_var,values=horarios,state="readonly",height=6,width=10        )
+        seletor_horario.pack()
+
+        # Duração
+        tk.Label(formulario,text="Duração",bg=cor_fundo).pack(pady=(10, 0))
+        duracao_var = tk.StringVar(value="00:30")
+
+        tk.OptionMenu(formulario,duracao_var,"00:15", "00:30", "00:45", "01:00","01:15", "01:30", "01:45", "02:00").pack()
+
+        # Matéria
+        tk.Label(formulario,text="Matéria",bg=cor_fundo).pack(pady=(10, 0))
+
+        materias_lista = gerenciamento_materias.listar_materias(materias)
+        nomes = [m["nome"] for m in materias_lista]
+        materia_var = tk.StringVar(value=nomes[0])
+
+        tk.OptionMenu(formulario,materia_var,*nomes).pack()
+
+        # Descrição
+        tk.Label(formulario,text="Descrição",bg=cor_fundo).pack(pady=(10, 0))
+
+        entrada_descricao = tk.Entry(formulario, width=35)
+        entrada_descricao.pack()
+
+        # Salvar planejamento
+        def salvar_planejamento():
+            try:
+                horario = horario_var.get()
+
+                horas, minutos = map(
+                    int,
+                    duracao_var.get().split(":")
+                )
+                duracao = horas * 60 + minutos
+                materia = next(
+                    m for m in materias_lista
+                    if m["nome"] == materia_var.get()
+                )
+
+                planejamento_semanal.adicionar_planejamento(data,horario,duracao,materia["id"],entrada_descricao.get().strip())
+
+            except ValueError as erro:
+                messagebox.showerror(
+                    "Erro",
+                    str(erro),
+                    parent=formulario
+                )
+                return
+
+            formulario.destroy()
+            janela_edicao.destroy()
+
+            for widget in resto_tela.winfo_children():
+                widget.destroy()
+
+            interface(4, materias)
+
+        tk.Button(formulario,text="Salvar",command=salvar_planejamento).pack(pady=15)
+    tk.Button(janela_edicao,text="Adicionar",command=adicionar).pack(pady=(0, 12))
+    atualizar_lista()
+
+
 def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
     global nome_materia
     global print_id_materia
@@ -319,9 +473,58 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
     elif tela ==3:
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)
-    elif tela ==4:
-        background = tk.Label(resto_tela,image=imagem_fundo)
-        background.place(x=0,y=0)
+    
+    
+    elif tela == 4:
+        background = tk.Label(resto_tela,image=imagem_tela_planejamento)
+        background.place(x=0, y=0)
+        inicio_semana = date.today() - timedelta(days=date.today().weekday())
+        semana = planejamento_semanal.listar_semana(inicio_semana)
+
+        for i, dia in enumerate(semana):            
+            if i == 0:  
+                x = 55
+                y = 140
+
+            elif i == 1:  # Terça-feira
+                x = 348
+                y = 140
+
+            elif i == 2:  # Quarta-feira
+                x = 632
+                y = 140
+
+            elif i == 3:  # Quinta-feira
+                x = 918
+                y = 140
+
+            elif i == 4:  # Sexta-feira
+                x = 204
+                y = 440
+
+            elif i == 5:  # Sábado
+                x = 490
+                y = 440
+
+            elif i == 6:  # Domingo
+                x = 784
+                y = 440
+
+
+
+            lista_periodos = dia["planejamentos"]
+
+            if lista_periodos:
+                texto = "\n".join(
+                    p["horario"] + " - " +
+                    (p["descricao"] or "Estudo") +
+                    " (" + str(p["duracao"]) + " min)"
+                    for p in lista_periodos
+                )
+            else:
+                texto = "Nenhum período planejado"
+            tk.Label(resto_tela,text=texto,font=("Inter", 10),bg=cor_branca,fg=cor_fundo_botao,wraplength=250,justify="center").place(x=x + 35, y=y - 50, width=210, height=110)
+            tk.Button(resto_tela,text="Editar",font=("Inter", 12, "bold"),bg=cor_branca,fg=cor_fundo_botao,activebackground=cor_branca,activeforeground=cor_fundo_botao,relief="flat",bd=0,cursor="hand2",command=lambda d=dia["data"]: editar_dia_planejamento(d, materias)).place(x=x + 100, y=y + 125, width=80, height=28)
     elif tela ==5:
         background = tk.Label(resto_tela,image=imagem_tela_cronometro)
         background.place(x=0,y=0)
@@ -379,8 +582,3 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
     elif tela ==7:
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)
-
-
-
-
-        
