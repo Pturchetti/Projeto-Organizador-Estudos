@@ -124,7 +124,6 @@ Indicadores possíveis para a versão inicial:
 - tempo estudado por matéria;
 - quantidade de sessões concluídas;
 - tempo estudado por dia ou semana;
-- comparação simples entre tempo planejado e tempo realizado, caso os dados necessários estejam disponíveis.
 
 Deve fornecer resultados que a interface consiga apresentar em textos, tabelas ou gráficos simples. Gráficos são opcionais: primeiro, é importante garantir que os cálculos e os totais estejam corretos.
 
