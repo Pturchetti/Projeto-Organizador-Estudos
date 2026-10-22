@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import gerenciamento_materias
+import historico
 
 #PROPORÇÕES
 largura = 1600
@@ -60,8 +61,9 @@ def carregar_imagens():
     global imagem_botao_remover_materia
     global imagem_tela_procura
     global imagem_tela_edicao
+    global imagem_tela_historico
 
-
+    imagem_tela_historico = tk.PhotoImage(file="imagens/tela_historico.png")
     imagem_botao_editar_materia = tk.PhotoImage(file="imagens/botao_editar_materia.png")
     imagem_botao_remover_materia = tk.PhotoImage(file="imagens/botao_remover_materia.png")
     imagem_tela_procura = tk.PhotoImage(file="imagens/tela_procura.png")
@@ -183,7 +185,13 @@ def mostrar_materias(materias):
         botao_materia = tk.Button(resto_tela,text=materia["nome"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda m=materia: (nome_materia.config(text=f"Nome: {m['nome']}"),print_id_materia.config(text=f"Id: {m['id']}"),print_detalhes_materia.config(text=f"Descrição:{m['descricao']}")))
         botao_materia.place(x=40,y=100+i*40)
 
-def interface(tela,materias=None):
+
+def mostrar_historico(dias_historico):
+    for i, dia in enumerate(dias_historico):
+        botao_dia = tk.Button(resto_tela,text=dia["data"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda d=dia: (nome_dia_historico.config(text=f"Data: {d['data']} - {d['dia_semana']}"),horas_historico.config(text=f"Tempo estudado: {d['horas_estudadas']}"),tarefas_historico.config(text=f"Tarefas concluídas: {len(d['tarefas_feitas'])}")))
+        botao_dia.place(x=40,y=100+i*40)
+    
+def interface(tela,materias=None,dias_historico=None):
     global nome_materia
     global print_id_materia
     global print_detalhes_materia
@@ -236,9 +244,21 @@ def interface(tela,materias=None):
         botao_reload.place(relx=0.24,rely=0.2)
         botao_pomodoro = tk.Button(resto_tela,image=imagem_botao_pomodoro)
         botao_pomodoro.place(relx=0.64,rely=0.2)
-    elif tela ==6:
-        background = tk.Label(resto_tela,image=imagem_fundo)
-        background.place(x=0,y=0)
+    elif tela == 6:
+
+        painel_historico = tk.Label(resto_tela,image=imagem_tela_historico)
+        painel_historico.place(x=0,y=0)
+
+        nome_dia_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
+        nome_dia_historico.place(x=500,y=100)
+
+        horas_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
+        horas_historico.place(x=500,y=150)
+
+        tarefas_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
+        tarefas_historico.place(x=500,y=200)
+
+        mostrar_historico(dias_historico)
     elif tela ==7:
         background = tk.Label(resto_tela,image=imagem_fundo)
         background.place(x=0,y=0)

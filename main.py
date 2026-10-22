@@ -2,10 +2,12 @@ import tkinter as tk
 import interface
 import gerenciamento_materias
 import persistencia
+import historico
 
 tela = 1
 materias = persistencia.carregar("materias")
 tarefas = persistencia.carregar("tarefas")
+dias_historico = persistencia.carregar("historico")
 
 def mudar_tela(nova_tela):
     global tela
@@ -21,7 +23,7 @@ def mudar_tela(nova_tela):
     for widget in interface.resto_tela.winfo_children():
         widget.destroy()
 
-    interface.interface(tela,materias)
+    interface.interface(tela,materias,dias_historico)
 
 interface.janela = tk.Tk()
 interface.carregar_imagens()
@@ -31,6 +33,6 @@ interface.janela.configure(bg=interface.cor_fundo)
 
 interface.carregar_menu(mudar_tela)
 interface.carregar_telas()
-interface.interface(tela,materias)
+interface.interface(tela,materias,dias_historico)
 
 interface.janela.mainloop()
