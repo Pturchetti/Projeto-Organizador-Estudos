@@ -144,7 +144,6 @@ def carregar_imagens():
     imagem_tela_planejamento = tk.PhotoImage(file="imagens/tela_planejamento.png")
     imagem_botao_editar_planejamento = tk.PhotoImage(file="imagens/botao_editar_planejamento.png")
     
-    # Imagem dedicada exclusivamente ao formulário de inclusão de tarefa
     imagem_tela_cadastrar_tarefa = tk.PhotoImage(file="imagens/tela_cadastrar_tarefa.png")
     
     try:
@@ -252,19 +251,16 @@ def editar_tarefa_tela(tarefas, materias, dias_historico, salvar_historico):
     
     entrada_id_tarefa = tk.Entry(resto_tela, font=fonte_palavras)
     entrada_id_tarefa.place(x=70, y=100)
-    entrada_id_materia = tk.Entry(resto_tela, font=fonte_palavras)
-    entrada_id_materia.place(x=200, y=205)
     entrada_titulo = tk.Entry(resto_tela, font=fonte_palavras)
-    entrada_titulo.place(x=250, y=320)
+    entrada_titulo.place(x=200, y=205)
     entrada_descricao = tk.Entry(resto_tela, font=fonte_palavras)
-    entrada_descricao.place(x=250, y=435)
+    entrada_descricao.place(x=250, y=320)
 
     def confirmar_edicao():
         try:
             gerenciamento_tarefas.editar_tarefa(
                 tarefas, 
                 int(entrada_id_tarefa.get()), 
-                entrada_id_materia.get(), 
                 entrada_titulo.get(), 
                 entrada_descricao.get()
             )
@@ -279,12 +275,9 @@ def cadastrar_nova_tarefa(tarefas, materias, dias_historico, salvar_historico):
     for widget in resto_tela.winfo_children():
         widget.destroy()
 
-    # Aplica o fundo correto apenas no ecrã de inclusão de tarefa
     tela_cadastro = tk.Label(resto_tela, image=imagem_tela_cadastrar_tarefa)
     tela_cadastro.place(x=0, y=0)
     
-    entrada_id_materia = tk.Entry(resto_tela, font=fonte_palavras)
-    entrada_id_materia.place(x=300, y=100) 
     entrada_titulo = tk.Entry(resto_tela, font=fonte_palavras)
     entrada_titulo.place(x=300, y=200) 
     entrada_descricao = tk.Entry(resto_tela, font=fonte_palavras)
@@ -294,7 +287,6 @@ def cadastrar_nova_tarefa(tarefas, materias, dias_historico, salvar_historico):
         try:
             gerenciamento_tarefas.cadastrar_tarefa(
                 tarefas, 
-                entrada_id_materia.get(), 
                 entrada_titulo.get(), 
                 entrada_descricao.get()
             )
@@ -334,7 +326,7 @@ def mostrar_tarefas(tarefas):
         status = "Concluída" if tarefa.get("concluida") else "Pendente"
         descricao_fmt = tarefa.get("descricao") if tarefa.get("descricao") else "Sem descrição"
         
-        texto_detalhes = f"Matéria ID: {tarefa.get('id_materia')}\nDescrição: {descricao_fmt}\nStatus: {status}"
+        texto_detalhes = f"Descrição: {descricao_fmt}\nStatus: {status}"
         
         botao_tarefa = tk.Button(resto_tela, text=tarefa["titulo"], font=fonte_palavras, anchor="w", relief="flat", bd=0, bg=cor_branca, activebackground=cor_branca, 
                                  command=lambda t=tarefa, txt=texto_detalhes: (nome_tarefa.config(text=f"Título: {t['titulo']}"), print_id_tarefa.config(text=f"Id: {t['id']}"), print_detalhes_tarefa.config(text=txt)))
@@ -521,7 +513,6 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         mostrar_materias(materias)
 
     elif tela == 3:
-        # Tela principal de tarefas mantém o painel padrão correto
         painel_tarefas = tk.Label(resto_tela, image=imagem_tela_materias)
         painel_tarefas.place(x=0, y=0)
 
@@ -603,7 +594,7 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         configuracao_pomodoro.place(relx=0.5,rely=0.04,anchor="n")
         tk.Label(configuracao_pomodoro,text="Duração dos períodos (minutos)",font=("Inter",20,"bold"),fg=cor_fundo_botao,bg=cor_fundo).pack(pady=(0,10))
 
-        campos_duracao_pomodoro = tk.Frame(configuracao_pomodoro,bg=cor_fundo)
+        campos_duracao_pomodoro = tk.Frame(config_pomodoro if 'config_pomodoro' in locals() else configuracao_pomodoro,bg=cor_fundo)
         campos_duracao_pomodoro.pack()
         tk.Label(campos_duracao_pomodoro,text="Foco",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo).grid(row=0,column=0,padx=(0,8))
         entrada_foco_pomodoro = tk.Entry(campos_duracao_pomodoro,font=("Inter",16,"bold"),width=6,justify="center",relief="flat",bd=0,bg=cor_branca,fg=cor_fundo_botao,insertbackground=cor_fundo_botao)
