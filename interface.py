@@ -195,6 +195,9 @@ def interface(tela,materias=None,dias_historico=None):
     global nome_materia
     global print_id_materia
     global print_detalhes_materia
+    global nome_dia_historico
+    global horas_historico
+    global tarefas_historico
 
     if tela == 1:
         fundo = tk.Label(resto_tela,bg=cor_fundo,image=imagem_tela_inicial)
