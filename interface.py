@@ -143,6 +143,8 @@ def carregar_imagens():
     imagem_botao_sair = tk.PhotoImage(file="imagens/botao_sair.png")
     imagem_tela_planejamento = tk.PhotoImage(file="imagens/tela_planejamento.png")
     imagem_botao_editar_planejamento = tk.PhotoImage(file="imagens/botao_editar_planejamento.png")
+    
+    # Imagem dedicada exclusivamente ao formulário de inclusão de tarefa
     imagem_tela_cadastrar_tarefa = tk.PhotoImage(file="imagens/tela_cadastrar_tarefa.png")
     
     try:
@@ -277,7 +279,7 @@ def cadastrar_nova_tarefa(tarefas, materias, dias_historico, salvar_historico):
     for widget in resto_tela.winfo_children():
         widget.destroy()
 
-    
+    # Aplica o fundo correto apenas no ecrã de inclusão de tarefa
     tela_cadastro = tk.Label(resto_tela, image=imagem_tela_cadastrar_tarefa)
     tela_cadastro.place(x=0, y=0)
     
@@ -519,8 +521,8 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         mostrar_materias(materias)
 
     elif tela == 3:
-        # Usando a tela de tarefas com a nova imagem de fundo correta
-        painel_tarefas = tk.Label(resto_tela, image=imagem_tela_cadastrar_tarefa)
+        # Tela principal de tarefas mantém o painel padrão correto
+        painel_tarefas = tk.Label(resto_tela, image=imagem_tela_materias)
         painel_tarefas.place(x=0, y=0)
 
         botao_concluir = tk.Button(resto_tela, image=imagem_botao_concluir_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: concluir_tarefa_tela(tarefas, materias, dias_historico, salvar_historico))
