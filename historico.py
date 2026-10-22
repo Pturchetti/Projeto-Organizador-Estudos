@@ -1,4 +1,3 @@
-
 from datetime import date, datetime
 
 DIAS_SEMANA = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira",
