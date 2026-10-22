@@ -528,7 +528,8 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
     elif tela ==5:
         background = tk.Label(resto_tela,image=imagem_tela_cronometro)
         background.place(x=0,y=0)
-        painel_pomodoro = tk.Frame(resto_tela,bg=cor_fundo_botao,bd=0,highlightthickness=0)
+
+        painel_pomodoro = tk.Frame(resto_tela,bg=cor_fundo_botao)
         painel_pomodoro.place(x=30,y=410,width=1220,height=475)
 
         pomodoro_atual = cronometro.Pomodoro()
@@ -536,31 +537,45 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
         salvar_historico_pomodoro = salvar_historico
 
         configuracao_pomodoro = tk.Frame(resto_tela,bg=cor_fundo)
-        configuracao_pomodoro.place(relx=0.5,rely=0.04,anchor="n")
-        tk.Label(configuracao_pomodoro,text="Duração dos períodos (minutos)",font=("Inter",20,"bold"),fg=cor_fundo_botao,bg=cor_fundo).pack(pady=(0,10))
+        configuracao_pomodoro.place(relx=0.5,rely=0.04,anchor="n",width=450,height=120)
 
-        campos_duracao_pomodoro = tk.Frame(configuracao_pomodoro,bg=cor_fundo)
-        campos_duracao_pomodoro.pack()
-        tk.Label(campos_duracao_pomodoro,text="Foco",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo).grid(row=0,column=0,padx=(0,8))
-        entrada_foco_pomodoro = tk.Entry(campos_duracao_pomodoro,font=("Inter",16,"bold"),width=6,justify="center",relief="flat",bd=0,bg=cor_branca,fg=cor_fundo_botao,insertbackground=cor_fundo_botao)
+        rotulo_duracao_pomodoro = tk.Label(configuracao_pomodoro,text="Duração dos períodos (minutos)",font=("Inter",20,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_duracao_pomodoro.place(relx=0.5,y=0,anchor="n")
+
+        rotulo_foco_pomodoro = tk.Label(configuracao_pomodoro,text="Foco",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_foco_pomodoro.place(x=15,y=40)
+
+        entrada_foco_pomodoro = tk.Entry(configuracao_pomodoro,font=("Inter",16,"bold"),width=6,bg=cor_branca,fg=cor_fundo_botao)
         entrada_foco_pomodoro.insert(0,str(pomodoro_atual.foco_minutos))
-        entrada_foco_pomodoro.grid(row=0,column=1,padx=(0,24))
-        tk.Label(campos_duracao_pomodoro,text="Descanso",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo).grid(row=0,column=2,padx=(0,8))
-        entrada_descanso_pomodoro = tk.Entry(campos_duracao_pomodoro,font=("Inter",16,"bold"),width=6,justify="center",relief="flat",bd=0,bg=cor_branca,fg=cor_fundo_botao,insertbackground=cor_fundo_botao)
+        entrada_foco_pomodoro.place(x=70,y=40)
+
+        rotulo_descanso_pomodoro = tk.Label(configuracao_pomodoro,text="Descanso",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_descanso_pomodoro.place(x=170,y=40)
+
+        entrada_descanso_pomodoro = tk.Entry(configuracao_pomodoro,font=("Inter",16,"bold"),width=6,bg=cor_branca,fg=cor_fundo_botao)
         entrada_descanso_pomodoro.insert(0,str(pomodoro_atual.descanso_minutos))
-        entrada_descanso_pomodoro.grid(row=0,column=3)
-        tk.Button(configuracao_pomodoro,text="Aplicar tempos",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=14,pady=6,cursor="hand2",command=aplicar_tempos_pomodoro).pack(pady=(12,0))
+        entrada_descanso_pomodoro.place(x=275,y=40)
+
+        botao_aplicar_tempos = tk.Button(configuracao_pomodoro,text="Aplicar tempos",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=aplicar_tempos_pomodoro)
+        botao_aplicar_tempos.place(relx=0.5,y=78,anchor="n")
 
         rotulo_modo_pomodoro = tk.Label(resto_tela,text="Período de foco",font=("Inter",26,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_modo_pomodoro.place(relx=0.5,rely=0.50,anchor="center")
+
         rotulo_tempo_pomodoro = tk.Label(resto_tela,text="25:00",font=("Inter",76,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_tempo_pomodoro.place(relx=0.5,rely=0.61,anchor="center")
+
         rotulo_status_pomodoro = tk.Label(resto_tela,text="Pronto para iniciar o foco.",font=("Inter",16,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_status_pomodoro.place(relx=0.5,rely=0.70,anchor="center")
 
-        tk.Button(resto_tela,text="Iniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=iniciar_pomodoro).place(relx=0.35,rely=0.79,anchor="center")
-        tk.Button(resto_tela,text="Pausar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=pausar_pomodoro).place(relx=0.5,rely=0.79,anchor="center")
-        tk.Button(resto_tela,text="Reiniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=reiniciar_pomodoro).place(relx=0.65,rely=0.79,anchor="center")
+        botao_iniciar_pomodoro = tk.Button(resto_tela,text="Iniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=iniciar_pomodoro)
+        botao_iniciar_pomodoro.place(relx=0.35,rely=0.79,anchor="center")
+
+        botao_pausar_pomodoro = tk.Button(resto_tela,text="Pausar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=pausar_pomodoro)
+        botao_pausar_pomodoro.place(relx=0.5,rely=0.79,anchor="center")
+
+        botao_reiniciar_pomodoro = tk.Button(resto_tela,text="Reiniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=reiniciar_pomodoro)
+        botao_reiniciar_pomodoro.place(relx=0.65,rely=0.79,anchor="center")
     elif tela == 6:
 
         painel_historico = tk.Label(resto_tela,image=imagem_tela_historico)
