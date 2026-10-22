@@ -13,6 +13,8 @@ def mudar_tela(nova_tela):
     global tela
     persistencia.salvar("materias", materias)
     persistencia.salvar("tarefas", tarefas)
+    persistencia.salvar("historico", dias_historico)
+    interface.encerrar_cronometro()
 
     if nova_tela == -1:
         interface.janela.destroy()
@@ -23,7 +25,7 @@ def mudar_tela(nova_tela):
     for widget in interface.resto_tela.winfo_children():
         widget.destroy()
 
-    interface.interface(tela,materias,dias_historico)
+    interface.interface(tela,materias,dias_historico,lambda: persistencia.salvar("historico", dias_historico))
 
 interface.janela = tk.Tk()
 interface.carregar_imagens()
@@ -33,6 +35,6 @@ interface.janela.configure(bg=interface.cor_fundo)
 
 interface.carregar_menu(mudar_tela)
 interface.carregar_telas()
-interface.interface(tela,materias,dias_historico)
+interface.interface(tela,materias,dias_historico,lambda: persistencia.salvar("historico", dias_historico))
 
 interface.janela.mainloop()

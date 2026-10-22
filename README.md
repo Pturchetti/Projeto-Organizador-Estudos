@@ -69,19 +69,9 @@ Uma tarefa pode conter identificador, título/descrição, matéria associada, p
 
 ### `cronometro.py` — temporizador de estudo (Pomodoro)
 
-Responsável por controlar o tempo das sessões de estudo.
+O cronômetro inicia com 25 minutos de foco e 5 minutos de descanso. Esses tempos podem ser alterados em minutos na tela do cronômetro.
 
-Deve contemplar:
-- iniciar, pausar e retomar a contagem;
-- encerrar ou reiniciar uma sessão;
-- permitir selecionar a matéria relacionada à sessão;
-- definir uma duração de estudo e, se o escopo permitir, intervalos de descanso;
-- informar à interface o tempo restante e o estado atual do cronômetro;
-- identificar quando a sessão termina e disponibilizar os dados necessários para registrar uma sessão concluída.
-
-A técnica Pomodoro pode ser implementada com períodos de estudo e descanso configuráveis ou com durações predefinidas. Para manter o escopo viável, a equipe pode começar com uma configuração simples.
-
-**Integração:** ao finalizar uma sessão válida, seus dados devem poder ser encaminhados ao histórico. Pausar ou cancelar não deve registrar acidentalmente uma sessão como concluída.
+É possível iniciar, pausar e reiniciar a contagem. Ao concluir o foco, o cronômetro registra o tempo estudado e alterna para o descanso; ao concluir o descanso, inicia um novo período de foco. Somente períodos de foco concluídos são contabilizados.
 
 ### `planejamento_semanal.py` — organização dos estudos da semana
 
@@ -114,6 +104,8 @@ Deve contemplar:
 Um registro de sessão pode conter identificador, matéria, data/hora e duração efetiva. Se forem usados intervalos de descanso, eles não devem ser somados ao tempo efetivo de estudo.
 
 **Integração:** este módulo mantém os registros; os cálculos de totais e indicadores ficam em `estatisticas.py`.
+
+As sessões Pomodoro concluídas somam sua duração ao tempo estudado do dia e incrementam a contagem de sessões. Registros antigos, sem essa contagem, continuam sendo exibidos com zero sessões.
 
 ### `estatisticas.py` — resumo do progresso de estudos
 
