@@ -1,14 +1,20 @@
-# cadastro e organização das tarefas
-def cadastrar_tarefa(tarefas, titulo, descricao=""):
+def cadastrar_tarefa(tarefas, id_materia, titulo, descricao=""):
     titulo = titulo.strip()
     descricao = descricao.strip()
 
     if titulo == "":
         raise ValueError("O nome da tarefa é inválido!")
     
+    if id_materia is None or str(id_materia).strip() == "":
+        raise ValueError("O ID da Matéria é obrigatório!")
+    try:
+        id_materia = int(id_materia)
+    except ValueError:
+        raise ValueError("O ID da Matéria deve ser um número!")
+    
     for tarefa in tarefas:
-        if tarefa["titulo"].lower() == titulo.lower():
-            raise ValueError("Tarefa já cadastrada!")
+        if tarefa["titulo"].lower() == titulo.lower() and tarefa.get("id_materia") == id_materia:
+            raise ValueError("Tarefa já cadastrada nesta matéria!")
             
     novo_id = 1
     for tarefa in tarefas:
@@ -17,6 +23,7 @@ def cadastrar_tarefa(tarefas, titulo, descricao=""):
             
     nova_tarefa = {
         "id": novo_id, 
+        "id_materia": id_materia,
         "titulo": titulo, 
         "descricao": descricao, 
         "concluida": False
@@ -43,8 +50,8 @@ def editar_tarefa(tarefas, id_tarefa, novo_titulo, nova_descricao=None):
         raise ValueError("O nome da tarefa é inválido!")
         
     for outra_tarefa in tarefas:
-        if outra_tarefa["id"] != id_tarefa and outra_tarefa["titulo"].lower() == novo_titulo.lower():
-            raise ValueError("Tarefa já existente!")
+        if outra_tarefa["id"] != id_tarefa and outra_tarefa["titulo"].lower() == novo_titulo.lower() and outra_tarefa.get("id_materia") == tarefa.get("id_materia"):
+            raise ValueError("Tarefa já existente nesta matéria!")
             
     tarefa["titulo"] = novo_titulo
     if nova_descricao is not None:
