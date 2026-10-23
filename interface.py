@@ -6,6 +6,7 @@ import historico
 import cronometro
 from datetime import date, datetime, timedelta
 import planejamento_semanal
+import estatisticas
 
 #PROPORÇÕES
 largura = 1600
@@ -42,80 +43,38 @@ entrada_descanso_pomodoro = None
 historico_pomodoro = None
 salvar_historico_pomodoro = None
 
-def encerrar_cronometro():
-    global pomodoro_job
-    if pomodoro_job is not None and janela is not None:
-        janela.after_cancel(pomodoro_job)
-        pomodoro_job = None
-    if pomodoro_atual is not None:
-        pomodoro_atual.pausar()
-
-def atualizar_pomodoro():
-    rotulo_tempo_pomodoro.config(text=cronometro.formatar_tempo(pomodoro_atual.segundos_restantes))
-    rotulo_modo_pomodoro.config(text=f"Período de {pomodoro_atual.modo}")
-
-def aplicar_tempos_pomodoro():
-    if pomodoro_atual.executando:
-        pausar_pomodoro()
-    try:
-        pomodoro_atual.configurar(entrada_foco_pomodoro.get(), entrada_descanso_pomodoro.get())
-    except ValueError as erro:
-        messagebox.showerror("Tempos inválidos", str(erro))
-        return
-    atualizar_pomodoro()
-    rotulo_status_pomodoro.config(text="Tempos aplicados. Pronto para iniciar.")
-
-def iniciar_pomodoro():
-    global pomodoro_job
-    if not pomodoro_atual.executando:
-        pomodoro_atual.iniciar()
-        rotulo_status_pomodoro.config(text="Cronômetro em andamento.")
-        pomodoro_job = janela.after(1000, avancar_pomodoro)
-
-def pausar_pomodoro():
-    global pomodoro_job
-    pomodoro_atual.pausar()
-    if pomodoro_job is not None:
-        janela.after_cancel(pomodoro_job)
-        pomodoro_job = None
-    rotulo_status_pomodoro.config(text="Cronômetro pausado.")
-
-def reiniciar_pomodoro():
-    global pomodoro_job
-    pomodoro_atual.reiniciar()
-    if pomodoro_job is not None:
-        janela.after_cancel(pomodoro_job)
-        pomodoro_job = None
-    atualizar_pomodoro()
-    rotulo_status_pomodoro.config(text="Período reiniciado.")
-
-def avancar_pomodoro():
-    global pomodoro_job
-    pomodoro_job = None
-    modo_concluido = pomodoro_atual.avancar_segundo()
-    if modo_concluido == "foco":
-        historico.registrar_sessao_pomodoro(historico_pomodoro, pomodoro_atual.foco_minutos)
-        salvar_historico_pomodoro()
-        rotulo_status_pomodoro.config(text="Foco concluído! Hora de descansar.")
-    elif modo_concluido == "descanso":
-        rotulo_status_pomodoro.config(text="Descanso concluído! Vamos focar.")
-    atualizar_pomodoro()
-    pomodoro_job = janela.after(1000, avancar_pomodoro)
 
 def carregar_imagens():
-    global imagem_tela_inicial, imagem_botao_inicio, imagem_botao_materias, imagem_botao_tarefas
-    global imagem_botao_planejamento, imagem_botao_cronometro, imagem_botao_historico
-    global imagem_botao_estatisticas, imagem_botao_sair, imagem_fundo, imagem_menu_lateral
-    global imagem_balao_tarefas, imagem_botao_pause, imagem_botao_reload, imagem_botao_pomodoro
-    global imagem_tela_cronometro, imagem_tela_materias, imagem_botao_cadastro_materias
-    global imagem_tela_cadastro_materia, imagem_botao_confirmar, imagem_botao_editar_materia
-    global imagem_botao_remover_materia, imagem_tela_procura, imagem_tela_edicao, imagem_tela_historico
-    global imagem_tela_planejamento, imagem_botao_editar_planejamento
-    global imagem_tela_cadastrar_tarefa
-    
-    global imagem_tela_tarefas, imagem_botao_cadastrar_tarefa, imagem_botao_editar_tarefa
-    global imagem_botao_remover_tarefa, imagem_botao_concluir_tarefa
+    global imagem_tela_inicial
+    global imagem_botao_inicio
+    global imagem_botao_materias
+    global imagem_botao_tarefas
+    global imagem_botao_planejamento
+    global imagem_botao_cronometro
+    global imagem_botao_historico
+    global imagem_botao_estatisticas
+    global imagem_botao_sair
+    global imagem_fundo
+    global imagem_menu_lateral
+    global imagem_balao_tarefas
+    global imagem_botao_pause
+    global imagem_botao_reload
+    global imagem_botao_pomodoro
+    global imagem_tela_cronometro
+    global imagem_tela_materias
+    global imagem_botao_cadastro_materias
+    global imagem_tela_cadastro_materia
+    global imagem_botao_confirmar
+    global imagem_botao_editar_materia
+    global imagem_botao_remover_materia
+    global imagem_tela_procura
+    global imagem_tela_edicao
+    global imagem_tela_historico
+    global imagem_tela_planejamento
+    global imagem_botao_editar_planejamento
+    global imagem_tela_estatisticas
 
+    imagem_tela_estatisticas = tk.PhotoImage(file="imagens/tela_estatisticas.png")
     imagem_tela_historico = tk.PhotoImage(file="imagens/tela_historico.png")
     imagem_botao_editar_materia = tk.PhotoImage(file="imagens/botao_editar_materia.png")
     imagem_botao_remover_materia = tk.PhotoImage(file="imagens/botao_remover_materia.png")
@@ -155,6 +114,68 @@ def carregar_imagens():
     imagem_botao_editar_tarefa = tk.PhotoImage(file="imagens/botao_editar_tarefa.png")
     imagem_botao_remover_tarefa = tk.PhotoImage(file="imagens/botao_remover_tarefa.png")
     imagem_botao_concluir_tarefa = tk.PhotoImage(file="imagens/botao_concluir_tarefa.png")
+
+
+def atualizar_pomodoro():
+    rotulo_tempo_pomodoro.config(text=cronometro.formatar_tempo(pomodoro_atual.segundos_restantes))
+    rotulo_modo_pomodoro.config(text=f"Período de {pomodoro_atual.modo}")
+
+def controlar_pomodoro(acao):
+    global pomodoro_job
+
+    if acao == "iniciar":
+        if not pomodoro_atual.executando:
+            pomodoro_atual.iniciar()
+            rotulo_status_pomodoro.config(text="Cronômetro em andamento.")
+            pomodoro_job = janela.after(1000, lambda: controlar_pomodoro("avancar"))
+
+    elif acao == "pausar":
+        pomodoro_atual.pausar()
+        if pomodoro_job is not None:
+            janela.after_cancel(pomodoro_job)
+            pomodoro_job = None
+        rotulo_status_pomodoro.config(text="Cronômetro pausado.")
+
+    elif acao == "reiniciar":
+        pomodoro_atual.reiniciar()
+        if pomodoro_job is not None:
+            janela.after_cancel(pomodoro_job)
+            pomodoro_job = None
+        atualizar_pomodoro()
+        rotulo_status_pomodoro.config(text="Período reiniciado.")
+
+    elif acao == "encerrar":
+        if pomodoro_job is not None and janela is not None:
+            janela.after_cancel(pomodoro_job)
+            pomodoro_job = None
+
+        if pomodoro_atual is not None:
+            pomodoro_atual.pausar()
+
+    elif acao == "aplicar":
+        if pomodoro_atual.executando:
+            controlar_pomodoro("pausar")
+        try:
+            pomodoro_atual.configurar(entrada_foco_pomodoro.get(), entrada_descanso_pomodoro.get())
+        except ValueError as erro:
+            messagebox.showerror("Tempos inválidos", str(erro))
+            return
+        atualizar_pomodoro()
+        rotulo_status_pomodoro.config(text="Tempos aplicados. Pronto para iniciar.")
+
+    elif acao == "avancar":
+        pomodoro_job = None
+        modo_concluido = pomodoro_atual.avancar_segundo()
+
+        if modo_concluido == "foco":
+            historico.registrar_sessao_pomodoro(historico_pomodoro, pomodoro_atual.foco_minutos)
+            salvar_historico_pomodoro()
+            rotulo_status_pomodoro.config(text="Foco concluído! Hora de descansar.")
+        elif modo_concluido == "descanso":
+            rotulo_status_pomodoro.config(text="Descanso concluído! Vamos focar.")
+
+        atualizar_pomodoro()
+        pomodoro_job = janela.after(1000, lambda: controlar_pomodoro("avancar"))
 
 def carregar_telas():
     global resto_tela
@@ -586,7 +607,8 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
     elif tela ==5:
         background = tk.Label(resto_tela,image=imagem_tela_cronometro)
         background.place(x=0,y=0)
-        painel_pomodoro = tk.Frame(resto_tela,bg=cor_fundo_botao,bd=0,highlightthickness=0)
+
+        painel_pomodoro = tk.Frame(resto_tela,bg=cor_fundo_botao)
         painel_pomodoro.place(x=30,y=410,width=1220,height=475)
 
         pomodoro_atual = cronometro.Pomodoro()
@@ -594,32 +616,45 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         salvar_historico_pomodoro = salvar_historico
 
         configuracao_pomodoro = tk.Frame(resto_tela,bg=cor_fundo)
-        configuracao_pomodoro.place(relx=0.5,rely=0.04,anchor="n")
-        tk.Label(configuracao_pomodoro,text="Duração dos períodos (minutos)",font=("Inter",20,"bold"),fg=cor_fundo_botao,bg=cor_fundo).pack(pady=(0,10))
+        configuracao_pomodoro.place(relx=0.5,rely=0.04,anchor="n",width=450,height=120)
 
-        campos_duracao_pomodoro = tk.Frame(configuracao_pomodoro,bg=cor_fundo)
-        campos_duracao_pomodoro.pack()
-        tk.Label(campos_duracao_pomodoro,text="Foco",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo).grid(row=0,column=0,padx=(0,8))
-        entrada_foco_pomodoro = tk.Entry(campos_duracao_pomodoro,font=("Inter",16,"bold"),width=6,justify="center",relief="flat",bd=0,bg=cor_branca,fg=cor_fundo_botao,insertbackground=cor_fundo_botao)
+        rotulo_duracao_pomodoro = tk.Label(configuracao_pomodoro,text="Duração dos períodos (minutos)",font=("Inter",20,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_duracao_pomodoro.place(relx=0.5,y=0,anchor="n")
+
+        rotulo_foco_pomodoro = tk.Label(configuracao_pomodoro,text="Foco",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_foco_pomodoro.place(x=15,y=40)
+
+        entrada_foco_pomodoro = tk.Entry(configuracao_pomodoro,font=("Inter",16,"bold"),width=6,bg=cor_branca,fg=cor_fundo_botao)
         entrada_foco_pomodoro.insert(0,str(pomodoro_atual.foco_minutos))
-        entrada_foco_pomodoro.grid(row=0,column=1,padx=(0,24))
-        tk.Label(campos_duracao_pomodoro,text="Descanso",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo).grid(row=0,column=2,padx=(0,8))
-        entrada_descanso_pomodoro = tk.Entry(campos_duracao_pomodoro,font=("Inter",16,"bold"),width=6,justify="center",relief="flat",bd=0,bg=cor_branca,fg=cor_fundo_botao,insertbackground=cor_fundo_botao)
+        entrada_foco_pomodoro.place(x=70,y=40)
+
+        rotulo_descanso_pomodoro = tk.Label(configuracao_pomodoro,text="Descanso",font=("Inter",16,"bold"),fg=cor_fundo_botao,bg=cor_fundo)
+        rotulo_descanso_pomodoro.place(x=170,y=40)
+
+        entrada_descanso_pomodoro = tk.Entry(configuracao_pomodoro,font=("Inter",16,"bold"),width=6,bg=cor_branca,fg=cor_fundo_botao)
         entrada_descanso_pomodoro.insert(0,str(pomodoro_atual.descanso_minutos))
-        entrada_descanso_pomodoro.grid(row=0,column=3)
-        tk.Button(configuracao_pomodoro,text="Aplicar tempos",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=14,pady=6,cursor="hand2",command=aplicar_tempos_pomodoro).pack(pady=(12,0))
+        entrada_descanso_pomodoro.place(x=275,y=40)
+        botao_aplicar_tempos = tk.Button(configuracao_pomodoro,text="Aplicar tempos",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=lambda: controlar_pomodoro("aplicar"))
+        botao_aplicar_tempos.place(relx=0.5,y=78,anchor="n")
 
         rotulo_modo_pomodoro = tk.Label(resto_tela,text="Período de foco",font=("Inter",26,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_modo_pomodoro.place(relx=0.5,rely=0.50,anchor="center")
+
         rotulo_tempo_pomodoro = tk.Label(resto_tela,text="25:00",font=("Inter",76,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_tempo_pomodoro.place(relx=0.5,rely=0.61,anchor="center")
+
         rotulo_status_pomodoro = tk.Label(resto_tela,text="Pronto para iniciar o foco.",font=("Inter",16,"bold"),bg=cor_fundo_botao,fg=cor_branca)
         rotulo_status_pomodoro.place(relx=0.5,rely=0.70,anchor="center")
 
-        tk.Button(resto_tela,text="Iniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=iniciar_pomodoro).place(relx=0.35,rely=0.79,anchor="center")
-        tk.Button(resto_tela,text="Pausar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=pausar_pomodoro).place(relx=0.5,rely=0.79,anchor="center")
-        tk.Button(resto_tela,text="Reiniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,activebackground=cor_fundo_botao,activeforeground=cor_branca,relief="flat",bd=0,padx=12,pady=8,cursor="hand2",command=reiniciar_pomodoro).place(relx=0.65,rely=0.79,anchor="center")
-        
+        botao_iniciar_pomodoro = tk.Button(resto_tela,text="Iniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=lambda: controlar_pomodoro("iniciar"))
+        botao_iniciar_pomodoro.place(relx=0.35,rely=0.79,anchor="center")
+
+        botao_pausar_pomodoro = tk.Button(resto_tela,text="Pausar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=lambda: controlar_pomodoro("pausar"))
+        botao_pausar_pomodoro.place(relx=0.5,rely=0.79,anchor="center")
+
+        botao_reiniciar_pomodoro = tk.Button(resto_tela,text="Reiniciar",font=("Inter",14,"bold"),fg=cor_branca,bg=cor_fundo_botao,command=lambda: controlar_pomodoro("reiniciar"))
+        botao_reiniciar_pomodoro.place(relx=0.65,rely=0.79,anchor="center")
+
     elif tela == 6:
         painel_historico = tk.Label(resto_tela,image=imagem_tela_historico)
         painel_historico.place(x=0,y=0)
@@ -636,5 +671,25 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         mostrar_historico(dias_historico)
         
     elif tela ==7:
-        background = tk.Label(resto_tela,image=imagem_fundo)
-        background.place(x=0,y=0)
+        background = tk.Label(resto_tela, image=imagem_tela_estatisticas)
+        background.place(x=0, y=0)
+        tempo_total, tempo_dia, dias_estudados, tempo_medio = estatisticas.estatisticas(dias_historico)
+
+        minutos_total = round(tempo_total * 60)
+        texto_tempo_total = tk.Label(resto_tela, text=f"{minutos_total // 60}h {minutos_total % 60}min", font=("Inter", 24, "bold"), bg=cor_branca, fg=cor_fundo_botao)
+        texto_tempo_total.place(x=100, y=150)
+
+        texto_dias_estudados = tk.Label(resto_tela, text=str(dias_estudados), font=("Inter", 24, "bold"), bg=cor_branca, fg=cor_fundo_botao)
+        texto_dias_estudados.place(x=1000, y=150)
+
+        minutos_medio = round(tempo_medio * 60)
+        texto_tempo_medio = tk.Label(resto_tela, text=f"{minutos_medio // 60}h {minutos_medio % 60}min", font=("Inter", 24, "bold"), bg=cor_branca, fg=cor_fundo_botao)
+        texto_tempo_medio.place(x=100, y=550)
+
+        y = 150
+
+        for data, tempo in sorted(tempo_dia.items(), reverse=True):
+            minutos_dia = round(tempo * 60)
+            texto_dia = tk.Label(resto_tela, text=f"{data}: {minutos_dia // 60}h {minutos_dia % 60}min", font=("Inter", 16), bg=cor_branca, fg=cor_fundo_botao)
+            texto_dia.place(x=500, y=y)
+            y += 35

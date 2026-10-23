@@ -3,7 +3,9 @@
         "data": "2026-10-22",
         "dia_semana": "quinta-feira",
         "horas_estudadas": 0.016666666666666666,
-        "tarefas_feitas": [],
+        "tarefas_feitas": [
+            1
+        ],
         "materias": [],
         "sessoes_pomodoro": 1
     }
