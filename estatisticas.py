@@ -10,30 +10,20 @@ def estatisticas(dias_historico):
     tempo_medio = 0
 
     for dia in dias_historico:
-        if dia["horas_estudadas"] > 0:
+        horas = dia.get("horas_estudadas", 0)
+
+        if horas > 0:
             dias_estudados += 1
+            tempo_total += horas
+            tempo_dia[dia["data"]] = horas
 
-        for item in dia["materias"]:
+        for item in dia.get("materias", []):
             materia = item["id_materia"]
-            duracao = item["duracao"]
-            data = dia["data"]
+            tempo_materia[materia] = tempo_materia.get(materia, 0) + item["duracao"]
 
-            if materia not in tempo_materia:
-                tempo_materia[materia] = 0
-            if data not in tempo_dia:
-                tempo_dia[data] = 0
-
-            tempo_total += duracao;
-            tempo_materia[materia] += duracao
-            tempo_dia[data] += duracao
-
-    maior_tempo = 0
     materia_mais_estudada = None
-        
-    for materia, tempo in tempo_materia.items():
-        if tempo > maior_tempo:
-            maior_tempo = tempo
-            materia_mais_estudada = materia
+    if tempo_materia:
+        materia_mais_estudada = max(tempo_materia, key = tempo_materia.get)
 
     if dias_estudados > 0:
         tempo_medio = tempo_total / dias_estudados
