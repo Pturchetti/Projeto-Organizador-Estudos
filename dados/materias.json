@@ -1,12 +1,17 @@
 [
     {
         "id": 1,
-        "nome": "oi",
-        "descricao": "oi"
+        "nome": "Projeto Integrador",
+        "descricao": "Matéria divertida"
     },
     {
         "id": 2,
-        "nome": "oi2",
-        "descricao": "3"
+        "nome": "Álgebra Linear",
+        "descricao": "Buriol"
+    },
+    {
+        "id": 3,
+        "nome": "Cálculo B",
+        "descricao": "Cálculo B"
     }
 ]
