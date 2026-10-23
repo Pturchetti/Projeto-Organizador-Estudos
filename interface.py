@@ -603,16 +603,16 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
         texto_tempo_total.place(x=100, y=150)
 
         texto_dias_estudados = tk.Label(resto_tela, text=str(dias_estudados), font=("Inter", 24, "bold"), bg=cor_branca, fg=cor_fundo_botao)
-        texto_dias_estudados.place(x=100, y=230)
+        texto_dias_estudados.place(x=1000, y=150)
 
         minutos_medio = round(tempo_medio * 60)
         texto_tempo_medio = tk.Label(resto_tela, text=f"{minutos_medio // 60}h {minutos_medio % 60}min", font=("Inter", 24, "bold"), bg=cor_branca, fg=cor_fundo_botao)
-        texto_tempo_medio.place(x=100, y=310)
+        texto_tempo_medio.place(x=100, y=550)
 
-        y = 400
+        y = 150
 
         for data, tempo in sorted(tempo_dia.items(), reverse=True):
             minutos_dia = round(tempo * 60)
             texto_dia = tk.Label(resto_tela, text=f"{data}: {minutos_dia // 60}h {minutos_dia % 60}min", font=("Inter", 16), bg=cor_branca, fg=cor_fundo_botao)
-            texto_dia.place(x=100, y=y)
+            texto_dia.place(x=500, y=y)
             y += 35
