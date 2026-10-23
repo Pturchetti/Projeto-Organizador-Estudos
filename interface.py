@@ -73,6 +73,12 @@ def carregar_imagens():
     global imagem_tela_planejamento
     global imagem_botao_editar_planejamento
     global imagem_tela_estatisticas
+    global imagem_tela_cadastrar_tarefa
+    global imagem_tela_tarefas
+    global imagem_botao_cadastrar_tarefa
+    global imagem_botao_editar_tarefa
+    global imagem_botao_remover_tarefa
+    global imagem_botao_concluir_tarefa
 
     imagem_tela_estatisticas = tk.PhotoImage(file="imagens/tela_estatisticas.png")
     imagem_tela_historico = tk.PhotoImage(file="imagens/tela_historico.png")
@@ -102,15 +108,9 @@ def carregar_imagens():
     imagem_botao_sair = tk.PhotoImage(file="imagens/botao_sair.png")
     imagem_tela_planejamento = tk.PhotoImage(file="imagens/tela_planejamento.png")
     imagem_botao_editar_planejamento = tk.PhotoImage(file="imagens/botao_editar_planejamento.png")
-    
     imagem_tela_cadastrar_tarefa = tk.PhotoImage(file="imagens/tela_cadastrar_tarefa.png")
-    
-    try:
-        imagem_tela_tarefas = tk.PhotoImage(file="imagens/tela_tarefas.png")
-    except tk.TclError:
-        imagem_tela_tarefas = imagem_tela_materias
-        
-    imagem_botao_cadastrar_tarefa = tk.PhotoImage(file="imagens/botao_cadastrar_terefa.png") 
+    imagem_tela_tarefas = tk.PhotoImage(file="imagens/tela_tarefas.png")
+    imagem_botao_cadastrar_tarefa = tk.PhotoImage(file="imagens/botao_cadastrar_terefa.png")
     imagem_botao_editar_tarefa = tk.PhotoImage(file="imagens/botao_editar_tarefa.png")
     imagem_botao_remover_tarefa = tk.PhotoImage(file="imagens/botao_remover_tarefa.png")
     imagem_botao_concluir_tarefa = tk.PhotoImage(file="imagens/botao_concluir_tarefa.png")
@@ -537,7 +537,7 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tare
         mostrar_materias(materias)
 
     elif tela == 3:
-        painel_tarefas = tk.Label(resto_tela, image=imagem_tela_materias)
+        painel_tarefas = tk.Label(resto_tela, image=imagem_tela_tarefas)
         painel_tarefas.place(x=0, y=0)
 
         botao_concluir = tk.Button(resto_tela, image=imagem_botao_concluir_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: concluir_tarefa_tela(tarefas, materias, dias_historico, salvar_historico))
