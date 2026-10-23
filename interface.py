@@ -1,7 +1,7 @@
-
 import tkinter as tk
 from tkinter import messagebox, ttk
 import gerenciamento_materias
+import gerenciamento_tarefas
 import historico
 import cronometro
 from datetime import date, datetime, timedelta
@@ -11,7 +11,6 @@ import estatisticas
 #PROPORÇÕES
 largura = 1600
 altura = 900
-
 
 #FONTES
 fonte_titulo = ("Inter",18,"bold")
@@ -23,22 +22,17 @@ cor_branca = ("#FFFFFF")
 cor_preto = ("#000000")
 cor_fundo_botao = ("#050f44")
 
-
 #TELAS
-#tela 1 -inicial
-#tela 2 -gerenciamento materias
-#tela 3 -gerenciamento tarefas
-#tela 4 -planejamento semanal
-#tela 5 -cronometro
-#tela 6 -histórico
-#tela 7 -estatísticas
-
-
 janela = None
 resto_tela = None
 nome_materia = None
 id_materia = None
 print_detalhes_materia = None
+
+nome_tarefa = None
+print_id_tarefa = None
+print_detalhes_tarefa = None
+
 pomodoro_atual = None
 pomodoro_job = None
 rotulo_tempo_pomodoro = None
@@ -108,8 +102,18 @@ def carregar_imagens():
     imagem_botao_sair = tk.PhotoImage(file="imagens/botao_sair.png")
     imagem_tela_planejamento = tk.PhotoImage(file="imagens/tela_planejamento.png")
     imagem_botao_editar_planejamento = tk.PhotoImage(file="imagens/botao_editar_planejamento.png")
-
-
+    
+    imagem_tela_cadastrar_tarefa = tk.PhotoImage(file="imagens/tela_cadastrar_tarefa.png")
+    
+    try:
+        imagem_tela_tarefas = tk.PhotoImage(file="imagens/tela_tarefas.png")
+    except tk.TclError:
+        imagem_tela_tarefas = imagem_tela_materias
+        
+    imagem_botao_cadastrar_tarefa = tk.PhotoImage(file="imagens/botao_cadastrar_terefa.png") 
+    imagem_botao_editar_tarefa = tk.PhotoImage(file="imagens/botao_editar_tarefa.png")
+    imagem_botao_remover_tarefa = tk.PhotoImage(file="imagens/botao_remover_tarefa.png")
+    imagem_botao_concluir_tarefa = tk.PhotoImage(file="imagens/botao_concluir_tarefa.png")
 
 
 def atualizar_pomodoro():
@@ -175,106 +179,189 @@ def controlar_pomodoro(acao):
 
 def carregar_telas():
     global resto_tela
-
     resto_tela = tk.Frame(janela,bg=cor_fundo)
     resto_tela.place(relx=0.2,rely=0,relwidth=0.8,relheight=1)
 
 def carregar_menu(mudar_tela):
     menu = tk.Frame(janela,bg=cor_fundo)
     menu.place(relx=0,rely=0,relwidth=0.2,relheight=1)
-
-
     menu_lateral = tk.Label(menu,image=imagem_menu_lateral,bg=cor_fundo)
     menu_lateral.place(relx=0,rely=0)
 
     botao_inicio = tk.Button(menu,image=imagem_botao_inicio,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(1))
     botao_inicio.place(relx = 0.1, rely = 0.15)
-
     botao_materias = tk.Button(menu,image=imagem_botao_materias,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(2))
     botao_materias.place(relx = 0.1, rely = 0.22)
-
     botao_tarefas = tk.Button(menu,image=imagem_botao_tarefas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(3))
     botao_tarefas.place(relx = 0.1, rely = 0.29)
-
     botao_planejamento=tk.Button(menu,image=imagem_botao_planejamento,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(4))
     botao_planejamento.place(relx = 0.1, rely = 0.36)
-
     botao_cronometro=tk.Button(menu,image=imagem_botao_cronometro,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(5))
     botao_cronometro.place(relx = 0.1, rely = 0.43)
-
     botao_historico=tk.Button(menu,image=imagem_botao_historico,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(6))
     botao_historico.place(relx = 0.1, rely = 0.50)
-
     botao_estatisticas=tk.Button(menu,image=imagem_botao_estatisticas,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(7))
     botao_estatisticas.place(relx = 0.1, rely = 0.57)
-
     botao_sair=tk.Button(menu,image=imagem_botao_sair,relief="flat",highlightthickness=0,bg=cor_fundo_botao,command= lambda:mudar_tela(-1))
     botao_sair.place(relx = 0.1, rely = 0.9)
 
-def remover_materia_tela(materias):
+def remover_materia_tela(materias, dias_historico, salvar_historico, tarefas):
     for widget in resto_tela.winfo_children():
         widget.destroy()
-
     tela_procura = tk.Label(resto_tela,image=imagem_tela_procura)
     tela_procura.place(x=0,y=0)
-
     entrada_id = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_id.place(x=70,y=200)
 
-    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.remover_materia(materias,int(entrada_id.get())),interface(2,materias)))
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.remover_materia(materias,int(entrada_id.get())),interface(2,materias,dias_historico,salvar_historico,tarefas)))
     botao_confirmar.place(x=500,y=650)
 
-def editar_materia_tela(materias):
+def editar_materia_tela(materias, dias_historico, salvar_historico, tarefas):
     for widget in resto_tela.winfo_children():
         widget.destroy()
-
     tela_edicao = tk.Label(resto_tela,image=imagem_tela_edicao)
     tela_edicao.place(x=0,y=0)
-
     entrada_id = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_id.place(x=70,y=100)
-
     entrada_nome = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_nome.place(x=200,y=205)
-
     entrada_descricao = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_descricao.place(x=250,y=320)
 
-    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.editar_materia(materias,int(entrada_id.get()),entrada_nome.get(),entrada_descricao.get()),interface(2,materias)))
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.editar_materia(materias,int(entrada_id.get()),entrada_nome.get(),entrada_descricao.get()),interface(2,materias,dias_historico,salvar_historico,tarefas)))
     botao_confirmar.place(x=500,y=650)
 
-def cadastrar_nova_materia(materias):
+def cadastrar_nova_materia(materias, dias_historico, salvar_historico, tarefas):
     for widget in resto_tela.winfo_children():
         widget.destroy()
-
-
     tela_cadastro_materia = tk.Label(resto_tela,image=imagem_tela_cadastro_materia)
     tela_cadastro_materia.place(x=0,y=0)
-
     entrada_nome = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_nome.place(x=300,y=200)
-
     entrada_descricao = tk.Entry(resto_tela,font=fonte_palavras)
     entrada_descricao.place(x=347,y=315)
 
-    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.cadastrar_materia(materias,entrada_nome.get(),entrada_descricao.get()),interface(2,materias)))    
+    botao_confirmar = tk.Button(resto_tela,image=imagem_botao_confirmar,command=lambda: (gerenciamento_materias.cadastrar_materia(materias,entrada_nome.get(),entrada_descricao.get()),interface(2,materias,dias_historico,salvar_historico,tarefas)))    
     botao_confirmar.place(x=500,y=650)
 
 def mostrar_materias(materias):
     lista_materias = gerenciamento_materias.listar_materias(materias)
-
     for i, materia in enumerate(lista_materias):
         botao_materia = tk.Button(resto_tela,text=materia["nome"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda m=materia: (nome_materia.config(text=f"Nome: {m['nome']}"),print_id_materia.config(text=f"Id: {m['id']}"),print_detalhes_materia.config(text=f"Descrição:{m['descricao']}")))
         botao_materia.place(x=40,y=100+i*40)
 
+def remover_tarefa_tela(tarefas, materias, dias_historico, salvar_historico):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+    tela_procura = tk.Label(resto_tela, image=imagem_tela_procura)
+    tela_procura.place(x=0, y=0)
+    
+    entrada_id = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_id.place(x=70, y=200)
+
+    botao_confirmar = tk.Button(resto_tela, image=imagem_botao_confirmar, command=lambda: (gerenciamento_tarefas.remover_tarefa(tarefas, int(entrada_id.get())), interface(3, materias, dias_historico, salvar_historico, tarefas)))
+    botao_confirmar.place(x=500, y=650)
+
+def editar_tarefa_tela(tarefas, materias, dias_historico, salvar_historico):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+    tela_edicao = tk.Label(resto_tela, image=imagem_tela_edicao)
+    tela_edicao.place(x=0, y=0)
+    
+    entrada_id_tarefa = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_id_tarefa.place(x=70, y=100)
+    entrada_titulo = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_titulo.place(x=200, y=205)
+    entrada_descricao = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_descricao.place(x=250, y=320)
+
+    def confirmar_edicao():
+        try:
+            gerenciamento_tarefas.editar_tarefa(
+                tarefas, 
+                int(entrada_id_tarefa.get()), 
+                entrada_titulo.get(), 
+                entrada_descricao.get()
+            )
+            interface(3, materias, dias_historico, salvar_historico, tarefas)
+        except ValueError as e:
+            messagebox.showerror("Erro", str(e))
+
+    botao_confirmar = tk.Button(resto_tela, image=imagem_botao_confirmar, command=confirmar_edicao)
+    botao_confirmar.place(x=500, y=650)
+
+def cadastrar_nova_tarefa(tarefas, materias, dias_historico, salvar_historico):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+    tela_cadastro = tk.Label(resto_tela, image=imagem_tela_cadastrar_tarefa)
+    tela_cadastro.place(x=0, y=0)
+    
+    entrada_id_materia = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_id_materia.place(x=300, y=100) 
+    entrada_titulo = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_titulo.place(x=300, y=200) 
+    entrada_descricao = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_descricao.place(x=300, y=320)
+
+    def confirmar_cadastro():
+        try:
+            gerenciamento_tarefas.cadastrar_tarefa(
+                tarefas, 
+                entrada_id_materia.get(), 
+                entrada_titulo.get(), 
+                entrada_descricao.get()
+            )
+            interface(3, materias, dias_historico, salvar_historico, tarefas)
+        except ValueError as e:
+            messagebox.showerror("Erro", str(e))
+
+    botao_confirmar = tk.Button(resto_tela, image=imagem_botao_confirmar, command=confirmar_cadastro)    
+    botao_confirmar.place(x=500, y=650)
+
+def concluir_tarefa_tela(tarefas, materias, dias_historico, salvar_historico):
+    for widget in resto_tela.winfo_children():
+        widget.destroy()
+
+    tela_procura = tk.Label(resto_tela, image=imagem_tela_procura)
+    tela_procura.place(x=0, y=0)
+    
+    entrada_id = tk.Entry(resto_tela, font=fonte_palavras)
+    entrada_id.place(x=70, y=200)
+
+    def confirmar_conclusao():
+        try:
+            id_t = int(entrada_id.get())
+            gerenciamento_tarefas.concluir_tarefa(tarefas, id_t)
+            historico.registrar_tarefa_concluida(dias_historico, id_t)
+            salvar_historico()
+            interface(3, materias, dias_historico, salvar_historico, tarefas)
+        except ValueError as e:
+            messagebox.showerror("Erro", str(e))
+
+    botao_confirmar = tk.Button(resto_tela, image=imagem_botao_confirmar, command=confirmar_conclusao)
+    botao_confirmar.place(x=500, y=650)
+
+def mostrar_tarefas(tarefas):
+    lista_tarefas = gerenciamento_tarefas.listar_tarefas(tarefas)
+    for i, tarefa in enumerate(lista_tarefas):
+        status = "Concluída" if tarefa.get("concluida") else "Pendente"
+        descricao_fmt = tarefa.get("descricao") if tarefa.get("descricao") else "Sem descrição"
+        
+        texto_detalhes = f"Matéria ID: {tarefa.get('id_materia')}\nDescrição: {descricao_fmt}\nStatus: {status}"
+        
+        botao_tarefa = tk.Button(resto_tela, text=tarefa["titulo"], font=fonte_palavras, anchor="w", relief="flat", bd=0, bg=cor_branca, activebackground=cor_branca, 
+                                 command=lambda t=tarefa, txt=texto_detalhes: (nome_tarefa.config(text=f"Título: {t['titulo']}"), print_id_tarefa.config(text=f"Id: {t['id']}"), print_detalhes_tarefa.config(text=txt)))
+        botao_tarefa.place(x=40, y=100+i*40)
 
 def mostrar_historico(dias_historico):
     for i, dia in enumerate(dias_historico):
         botao_dia = tk.Button(resto_tela,text=dia["data"],font=fonte_palavras,anchor="w",relief="flat",bd=0,bg=cor_branca,activebackground=cor_branca,command=lambda d=dia: (nome_dia_historico.config(text=f"Data: {d['data']} - {d['dia_semana']}"),horas_historico.config(text=f"Tempo estudado: {d['horas_estudadas']}"),tarefas_historico.config(text=f"Tarefas concluídas: {len(d['tarefas_feitas'])}"),sessoes_historico.config(text=f"Sessões Pomodoro concluídas: {d.get('sessoes_pomodoro', 0)}")))
         botao_dia.place(x=40,y=100+i*40)
 
-
-def editar_dia_planejamento(data, materias):
+def editar_dia_planejamento(data, materias, dias_historico, salvar_historico, tarefas):
     janela_edicao = tk.Toplevel(janela)
     janela_edicao.title("Planejamento do dia")
     janela_edicao.geometry("650x500")
@@ -332,7 +419,7 @@ def editar_dia_planejamento(data, materias):
             for widget in resto_tela.winfo_children():
                 widget.destroy()
 
-            interface(4, materias)
+            interface(4, materias, dias_historico, salvar_historico, tarefas)
 
     def adicionar():
         if not materias:
@@ -348,7 +435,6 @@ def editar_dia_planejamento(data, materias):
         formulario.geometry("350x390")
         formulario.configure(bg=cor_fundo)
 
-        # Horário
         tk.Label(formulario,text="Horário",bg=cor_fundo).pack(pady=(10, 0))
 
         horarios = [
@@ -362,13 +448,11 @@ def editar_dia_planejamento(data, materias):
         seletor_horario = ttk.Combobox(formulario,textvariable=horario_var,values=horarios,state="readonly",height=6,width=10        )
         seletor_horario.pack()
 
-        # Duração
         tk.Label(formulario,text="Duração",bg=cor_fundo).pack(pady=(10, 0))
         duracao_var = tk.StringVar(value="00:30")
 
         tk.OptionMenu(formulario,duracao_var,"00:15", "00:30", "00:45", "01:00","01:15", "01:30", "01:45", "02:00").pack()
 
-        # Matéria
         tk.Label(formulario,text="Matéria",bg=cor_fundo).pack(pady=(10, 0))
 
         materias_lista = gerenciamento_materias.listar_materias(materias)
@@ -377,17 +461,14 @@ def editar_dia_planejamento(data, materias):
 
         tk.OptionMenu(formulario,materia_var,*nomes).pack()
 
-        # Descrição
         tk.Label(formulario,text="Descrição",bg=cor_fundo).pack(pady=(10, 0))
 
         entrada_descricao = tk.Entry(formulario, width=35)
         entrada_descricao.pack()
 
-        # Salvar planejamento
         def salvar_planejamento():
             try:
                 horario = horario_var.get()
-
                 horas, minutos = map(
                     int,
                     duracao_var.get().split(":")
@@ -414,48 +495,35 @@ def editar_dia_planejamento(data, materias):
             for widget in resto_tela.winfo_children():
                 widget.destroy()
 
-            interface(4, materias)
+            interface(4, materias, dias_historico, salvar_historico, tarefas)
 
         tk.Button(formulario,text="Salvar",command=salvar_planejamento).pack(pady=15)
     tk.Button(janela_edicao,text="Adicionar",command=adicionar).pack(pady=(0, 12))
     atualizar_lista()
 
-
-def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
-    global nome_materia
-    global print_id_materia
-    global print_detalhes_materia
-    global nome_dia_historico
-    global horas_historico
-    global tarefas_historico
-    global sessoes_historico
-    global pomodoro_atual
-    global rotulo_tempo_pomodoro
-    global rotulo_modo_pomodoro
-    global rotulo_status_pomodoro
-    global entrada_foco_pomodoro
-    global entrada_descanso_pomodoro
-    global historico_pomodoro
-    global salvar_historico_pomodoro
+def interface(tela,materias=None,dias_historico=None,salvar_historico=None, tarefas=None):
+    global nome_materia, print_id_materia, print_detalhes_materia
+    global nome_tarefa, print_id_tarefa, print_detalhes_tarefa
+    global nome_dia_historico, horas_historico, tarefas_historico, sessoes_historico
+    global pomodoro_atual, rotulo_tempo_pomodoro, rotulo_modo_pomodoro, rotulo_status_pomodoro
+    global entrada_foco_pomodoro, entrada_descanso_pomodoro
+    global historico_pomodoro, salvar_historico_pomodoro
 
     if tela == 1:
         fundo = tk.Label(resto_tela,bg=cor_fundo,image=imagem_tela_inicial)
         fundo.place(x=0,y=0)
         
     elif tela == 2:
-        
-        
-
         painel_materias = tk.Label(resto_tela,image=imagem_tela_materias)
         painel_materias.place(x=0,y=0)
 
-        botao_editar_materia = tk.Button(resto_tela,image=imagem_botao_editar_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: editar_materia_tela(materias))
+        botao_editar_materia = tk.Button(resto_tela,image=imagem_botao_editar_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: editar_materia_tela(materias, dias_historico, salvar_historico, tarefas))
         botao_editar_materia.place(relx=0.045,rely=0.70)
 
-        botao_remover_materia = tk.Button(resto_tela,image=imagem_botao_remover_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: remover_materia_tela(materias))
+        botao_remover_materia = tk.Button(resto_tela,image=imagem_botao_remover_materia,relief="flat",bd=0,highlightthickness=0,command=lambda: remover_materia_tela(materias, dias_historico, salvar_historico, tarefas))
         botao_remover_materia.place(relx=0.045,rely=0.775)
 
-        botao_cadastro_materias = tk.Button(resto_tela,image=imagem_botao_cadastro_materias,relief="flat",bd=0,highlightthickness=0,command=lambda:cadastrar_nova_materia(materias))
+        botao_cadastro_materias = tk.Button(resto_tela,image=imagem_botao_cadastro_materias,relief="flat",bd=0,highlightthickness=0,command=lambda:cadastrar_nova_materia(materias, dias_historico, salvar_historico, tarefas))
         botao_cadastro_materias.place(relx=0.045,rely=0.85)
 
         nome_materia = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
@@ -468,12 +536,31 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
         print_detalhes_materia.place(x=500,y=200)
         mostrar_materias(materias)
 
+    elif tela == 3:
+        painel_tarefas = tk.Label(resto_tela, image=imagem_tela_materias)
+        painel_tarefas.place(x=0, y=0)
+
+        botao_concluir = tk.Button(resto_tela, image=imagem_botao_concluir_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: concluir_tarefa_tela(tarefas, materias, dias_historico, salvar_historico))
+        botao_concluir.place(relx=0.045, rely=0.625)
+
+        botao_editar = tk.Button(resto_tela, image=imagem_botao_editar_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: editar_tarefa_tela(tarefas, materias, dias_historico, salvar_historico))
+        botao_editar.place(relx=0.045, rely=0.70)
+
+        botao_remover = tk.Button(resto_tela, image=imagem_botao_remover_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: remover_tarefa_tela(tarefas, materias, dias_historico, salvar_historico))
+        botao_remover.place(relx=0.045, rely=0.775)
+
+        botao_cadastro = tk.Button(resto_tela, image=imagem_botao_cadastrar_tarefa, relief="flat", bd=0, highlightthickness=0, command=lambda: cadastrar_nova_tarefa(tarefas, materias, dias_historico, salvar_historico))
+        botao_cadastro.place(relx=0.045, rely=0.85)
+
+        nome_tarefa = tk.Label(resto_tela, text="", font=fonte_titulo, bg=cor_branca)
+        nome_tarefa.place(x=500, y=100)
+        print_id_tarefa = tk.Label(resto_tela, text="", font=fonte_titulo, bg=cor_branca)
+        print_id_tarefa.place(x=500, y=150)
+        print_detalhes_tarefa = tk.Label(resto_tela, text="", font=fonte_titulo, bg=cor_branca, wraplength=400, justify="left")
+        print_detalhes_tarefa.place(x=500, y=200)
         
-    elif tela ==3:
-        background = tk.Label(resto_tela,image=imagem_fundo)
-        background.place(x=0,y=0)
-    
-    
+        mostrar_tarefas(tarefas)
+        
     elif tela == 4:
         background = tk.Label(resto_tela,image=imagem_tela_planejamento)
         background.place(x=0, y=0)
@@ -484,32 +571,24 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
             if i == 0:  
                 x = 55
                 y = 140
-
-            elif i == 1:  # Terça-feira
+            elif i == 1:
                 x = 348
                 y = 140
-
-            elif i == 2:  # Quarta-feira
+            elif i == 2:
                 x = 632
                 y = 140
-
-            elif i == 3:  # Quinta-feira
+            elif i == 3:
                 x = 918
                 y = 140
-
-            elif i == 4:  # Sexta-feira
+            elif i == 4:
                 x = 204
                 y = 440
-
-            elif i == 5:  # Sábado
+            elif i == 5:
                 x = 490
                 y = 440
-
-            elif i == 6:  # Domingo
+            elif i == 6:
                 x = 784
                 y = 440
-
-
 
             lista_periodos = dia["planejamentos"]
 
@@ -523,7 +602,8 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
             else:
                 texto = "Nenhum período planejado"
             tk.Label(resto_tela,text=texto,font=("Inter", 10),bg=cor_branca,fg=cor_fundo_botao,wraplength=250,justify="center").place(x=x + 35, y=y - 50, width=210, height=110)
-            tk.Button(resto_tela,text="Editar",font=("Inter", 12, "bold"),bg=cor_branca,fg=cor_fundo_botao,activebackground=cor_branca,activeforeground=cor_fundo_botao,relief="flat",bd=0,cursor="hand2",command=lambda d=dia["data"]: editar_dia_planejamento(d, materias)).place(x=x + 100, y=y + 125, width=80, height=28)
+            tk.Button(resto_tela,text="Editar",font=("Inter", 12, "bold"),bg=cor_branca,fg=cor_fundo_botao,activebackground=cor_branca,activeforeground=cor_fundo_botao,relief="flat",bd=0,cursor="hand2",command=lambda d=dia["data"]: editar_dia_planejamento(d, materias, dias_historico, salvar_historico, tarefas)).place(x=x + 100, y=y + 125, width=80, height=28)
+            
     elif tela ==5:
         background = tk.Label(resto_tela,image=imagem_tela_cronometro)
         background.place(x=0,y=0)
@@ -576,23 +656,20 @@ def interface(tela,materias=None,dias_historico=None,salvar_historico=None):
         botao_reiniciar_pomodoro.place(relx=0.65,rely=0.79,anchor="center")
 
     elif tela == 6:
-
         painel_historico = tk.Label(resto_tela,image=imagem_tela_historico)
         painel_historico.place(x=0,y=0)
 
         nome_dia_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
         nome_dia_historico.place(x=500,y=100)
-
         horas_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
         horas_historico.place(x=500,y=150)
-
         tarefas_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
         tarefas_historico.place(x=500,y=200)
-
         sessoes_historico = tk.Label(resto_tela,text="",font=fonte_titulo,bg=cor_branca)
         sessoes_historico.place(x=500,y=250)
 
         mostrar_historico(dias_historico)
+        
     elif tela ==7:
         background = tk.Label(resto_tela, image=imagem_tela_estatisticas)
         background.place(x=0, y=0)
