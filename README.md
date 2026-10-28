@@ -1,163 +1,167 @@
 # Organizador de Estudos
 
-Aplicação desktop desenvolvida em Python com Tkinter para ajudar estudantes a organizar disciplinas, acompanhar tarefas e prazos, planejar a semana, cronometrar sessões de estudo e visualizar o próprio progresso.
+Aplicação desktop desenvolvida em Python com Tkinter para auxiliar estudantes na organização da rotina acadêmica. O sistema reúne ferramentas para gerenciamento de disciplinas e tarefas, planejamento semanal, controle de sessões de estudo e acompanhamento do progresso individual.
 
-O projeto será desenvolvido em equipe e tem escopo inicial pensado para ser concluído em aproximadamente uma semana. Os módulos abaixo definem responsabilidades para orientar a implementação e facilitar a integração, sem determinar como cada integrante deve programar sua parte.
+O projeto foi desenvolvido por estudantes do segundo semestre do curso de **Engenharia de Computação da Universidade Federal de Santa Maria (UFSM)**, no contexto da disciplina de **Projeto Integrador**, com o objetivo de aplicar conceitos de programação e desenvolvimento de software na construção de uma solução voltada a uma necessidade cotidiana dos estudantes.
 
-## Módulos Python
+## 1. Sobre o projeto
 
-### `main.py` — inicialização e integração
+A organização da rotina acadêmica envolve diferentes atividades, como acompanhar prazos, distribuir tarefas ao longo da semana, reservar períodos para cada disciplina e avaliar o tempo dedicado aos estudos. Quando essas informações ficam dispersas entre diferentes ferramentas ou registros, pode ser mais difícil acompanhar as atividades e manter uma rotina organizada.
 
-Será o ponto de entrada do programa. Deve reunir a inicialização da aplicação e conectar os módulos, sem concentrar nele as regras específicas de cada funcionalidade.
+O Organizador de Estudos propõe reunir essas funcionalidades em uma única aplicação desktop, permitindo que o estudante gerencie suas atividades acadêmicas e acompanhe os próprios registros de estudo em um ambiente integrado.
 
-Responsabilidades esperadas:
-- iniciar a aplicação e abrir a interface principal;
-- preparar ou solicitar o carregamento dos dados necessários;
-- conectar a interface aos módulos de matérias, tarefas, cronômetro, planejamento, histórico, estatísticas e persistência;
-- coordenar o encerramento da aplicação, quando necessário.
+A aplicação utiliza armazenamento local, dispensando a necessidade de um servidor externo para guardar as informações. Dessa forma, os dados podem ser mantidos entre diferentes execuções do programa no mesmo computador.
 
-**Limite:** as telas devem ficar em `interface.py`, e as regras específicas devem permanecer nos módulos responsáveis por elas.
+## 2. Funcionalidades
 
-### `interface.py` — telas, componentes visuais e navegação
+### 2.1. Gerenciamento de disciplinas
 
-Responsável pela parte visual e pela interação com o usuário usando Tkinter.
+Permite cadastrar e organizar as disciplinas cursadas pelo estudante, mantendo suas informações disponíveis para utilização nas demais funcionalidades da aplicação.
 
-Deve contemplar:
-- janela principal e organização visual das áreas da aplicação;
-- menus, botões, campos de entrada, listas, rótulos e mensagens;
-- navegação entre as funcionalidades;
-- apresentação dos dados recebidos dos demais módulos;
-- captura das ações do usuário e encaminhamento delas ao módulo correspondente;
-- avisos de sucesso, erros de preenchimento e situações sem dados cadastrados.
+### 2.2. Gerenciamento de tarefas acadêmicas
 
-A interface deve permitir acessar as matérias, tarefas, cronômetro, planejamento semanal, histórico e estatísticas.
+Possibilita registrar atividades, como trabalhos, listas de exercícios e provas, associando-as às respectivas disciplinas quando aplicável. O acompanhamento do estado de cada tarefa permite distinguir atividades pendentes daquelas já concluídas.
 
-**Limite:** evitar concentrar na interface regras de cadastro, cálculos estatísticos ou leitura e gravação de arquivos. Ela deve solicitar essas operações aos módulos responsáveis.
+### 2.3. Cronômetro de estudos
 
-### `gerenciamento_materias.py` — cadastro e organização das matérias
+Disponibiliza um temporizador baseado na técnica Pomodoro, que alterna períodos de foco e descanso. A duração dos períodos pode ser configurada pelo usuário, e o tempo de estudo é registrado conforme as regras de contabilização implementadas na aplicação.
 
-Responsável por manter a lista de matérias ou disciplinas que o estudante está cursando.
+### 2.4. Planejamento semanal
 
-Deve contemplar:
-- cadastrar uma matéria;
-- listar e consultar as matérias cadastradas;
-- localizar uma matéria específica para uso em tarefas, planejamento e sessões de estudo;
-- editar informações de uma matéria, se essa funcionalidade for incluída;
-- remover uma matéria, considerando que outros registros podem estar associados a ela;
-- validar informações básicas, como evitar um nome vazio e tratar cadastros duplicados.
+Permite organizar períodos de estudo ao longo da semana, distribuindo as atividades previstas entre os dias disponíveis. O planejamento funciona como uma referência para a organização da rotina, distinguindo o tempo planejado daquele efetivamente registrado.
 
-Uma matéria pode ter, no mínimo, um identificador e um nome. Outros campos, como cor ou descrição, podem ser definidos pela equipe se forem úteis.
+### 2.5. Histórico de estudos
 
-**Integração:** tarefas, planejamento e histórico devem conseguir associar seus registros à matéria correspondente de maneira consistente.
+Reúne registros das sessões de estudo concluídas, permitindo consultar informações sobre as atividades realizadas e o tempo dedicado aos estudos.
 
-### `gerenciamento_tarefas.py` — tarefas, prazos e conclusão
+### 2.6. Estatísticas de estudo
 
-Responsável por registrar e acompanhar atividades acadêmicas, como listas de exercícios, trabalhos e provas.
+Apresenta indicadores calculados a partir dos registros disponíveis, oferecendo uma visão geral do tempo dedicado aos estudos e do progresso registrado ao longo do tempo.
 
-Deve contemplar:
-- cadastrar uma tarefa com título ou descrição;
-- associar a tarefa a uma matéria, quando aplicável;
-- registrar prazo ou data prevista, quando houver;
-- listar tarefas e consultar seus detalhes;
-- distinguir tarefas pendentes das concluídas;
-- permitir marcar uma tarefa como concluída e, se necessário, atualizar ou excluir um registro;
-- oferecer informações que permitam à interface destacar tarefas próximas do prazo ou atrasadas.
+### 2.7. Persistência de dados
 
-Uma tarefa pode conter identificador, título/descrição, matéria associada, prazo e estado de conclusão. A equipe deve manter os mesmos critérios de estado em todo o programa.
+Armazena localmente as informações da aplicação em arquivos JSON, permitindo recuperá-las em execuções posteriores sem depender de um serviço externo de banco de dados.
 
-**Limite:** este módulo cuida das atividades a realizar; o registro do tempo efetivamente estudado pertence ao cronômetro e ao histórico.
+> A disponibilidade e o comportamento de cada funcionalidade correspondem ao estado atual da implementação no repositório.
 
-### `cronometro.py` — temporizador de estudo (Pomodoro)
+## 3. Tecnologias utilizadas
 
-O cronômetro inicia com 25 minutos de foco e 5 minutos de descanso. Esses tempos podem ser alterados em minutos na tela do cronômetro.
+| Tecnologia | Aplicação no projeto |
+|---|---|
+| Python | Implementação da lógica e das funcionalidades. |
+| Tkinter | Construção da interface gráfica desktop. |
+| JSON | Organização e armazenamento local dos dados. |
+| Git | Controle de versão do código-fonte. |
+| GitHub | Hospedagem do repositório e colaboração no desenvolvimento. |
 
-É possível iniciar, pausar e reiniciar a contagem. Ao concluir o foco, o cronômetro registra o tempo estudado e alterna para o descanso; ao concluir o descanso, inicia um novo período de foco. Somente períodos de foco concluídos são contabilizados.
+A escolha dessas tecnologias permite desenvolver uma aplicação desktop sem depender de um framework gráfico externo de grande porte ou de uma infraestrutura de servidor.
 
-### `planejamento_semanal.py` — organização dos estudos da semana
+## 4. Organização do código
 
-Responsável por organizar e consultar os períodos de estudo planejados para os dias da semana.
+O projeto utiliza uma estrutura modular, na qual os arquivos Python são organizados de acordo com as responsabilidades principais da aplicação.
 
-Deve contemplar:
-- adicionar um período de estudo a um dia;
-- associar o período a uma matéria e, se desejado, a uma tarefa;
-- registrar dia e horário ou período previsto;
-- consultar o planejamento de um dia e visualizar a semana;
-- editar ou remover um período planejado;
-- tratar conflitos simples de horário, caso essa validação seja implementada.
+```text
+Projeto-Organizador-Estudos/
+├── main.py
+├── interface.py
+├── gerenciamento_materias.py
+├── gerenciamento_tarefas.py
+├── cronometro.py
+├── planejamento_semanal.py
+├── historico.py
+├── estatisticas.py
+├── persistencia.py
+├── imagens/
+├── fontes/
+└── dados/
+```
 
-Cada item do planejamento pode conter identificador, dia/data, horário ou duração prevista, matéria e descrição opcional.
+Os principais módulos são:
 
-**Distinção importante:** o planejamento representa o que o estudante pretende estudar; o histórico registra o que foi efetivamente realizado. Um período planejado não deve ser tratado automaticamente como uma sessão concluída.
+- **`main.py`** — inicialização da aplicação e integração dos componentes.
+- **`interface.py`** — construção das telas e gerenciamento da interação com o usuário.
+- **`gerenciamento_materias.py`** — operações relacionadas às disciplinas cadastradas.
+- **`gerenciamento_tarefas.py`** — gerenciamento das atividades acadêmicas e de seus estados.
+- **`cronometro.py`** — controle do temporizador e dos períodos de foco e descanso.
+- **`planejamento_semanal.py`** — organização dos períodos de estudo planejados.
+- **`historico.py`** — registro e consulta das atividades de estudo realizadas.
+- **`estatisticas.py`** — cálculo dos indicadores apresentados pela aplicação.
+- **`persistencia.py`** — leitura e gravação dos dados locais.
 
-### `historico.py` — registro e consulta das sessões realizadas
+As pastas de recursos complementam essa organização: `imagens/` reúne os elementos gráficos utilizados pela interface, `fontes/` pode conter fontes adicionais e `dados/` é destinada aos arquivos de armazenamento local.
 
-Responsável por manter os registros das sessões de estudo concluídas.
+A separação por módulos busca facilitar a manutenção do código, a compreensão das responsabilidades de cada componente e a evolução das funcionalidades.
 
-Deve contemplar:
-- receber os dados de uma sessão finalizada pelo cronômetro;
-- registrar matéria, data e duração efetiva da sessão;
-- listar e consultar sessões anteriores;
-- permitir filtrar ou agrupar os registros por data e matéria, se o escopo permitir;
-- fornecer os registros necessários para as estatísticas;
-- evitar duplicar uma mesma sessão por causa de múltiplos eventos de encerramento.
+## 5. Requisitos
 
-Um registro de sessão pode conter identificador, matéria, data/hora e duração efetiva. Se forem usados intervalos de descanso, eles não devem ser somados ao tempo efetivo de estudo.
+Para executar o projeto, são necessários:
 
-**Integração:** este módulo mantém os registros; os cálculos de totais e indicadores ficam em `estatisticas.py`.
+- Python 3 compatível com o código da aplicação;
+- Tkinter disponível na instalação do Python;
+- Git, caso o repositório seja obtido pela linha de comando.
 
-As sessões Pomodoro concluídas somam sua duração ao tempo estudado do dia e incrementam a contagem de sessões. Registros antigos, sem essa contagem, continuam sendo exibidos com zero sessões.
+O programa foi concebido como uma aplicação desktop. Não é necessário configurar um servidor web ou instalar um sistema de gerenciamento de banco de dados externo.
 
-### `estatisticas.py` — resumo do progresso de estudos
+### 5.1. Instalação do Python e do Tkinter
 
-Responsável por calcular indicadores a partir do histórico e, quando pertinente, do planejamento e das tarefas.
+O Python pode ser obtido em [python.org](https://www.python.org/downloads/).
 
-Indicadores possíveis para a versão inicial:
-- tempo total de estudo;
-- tempo estudado por matéria;
-- quantidade de sessões concluídas;
-- tempo estudado por dia ou semana;
+A disponibilidade do Tkinter depende da distribuição do Python e do sistema operacional utilizado.
 
-Deve fornecer resultados que a interface consiga apresentar em textos, tabelas ou gráficos simples. Gráficos são opcionais: primeiro, é importante garantir que os cálculos e os totais estejam corretos.
+- **Windows:** recomenda-se uma instalação do Python que inclua o Tcl/Tk.
+- **Linux:** algumas distribuições disponibilizam o Tkinter em um pacote separado. O nome e o procedimento de instalação variam conforme a distribuição.
+- **macOS:** a disponibilidade do Tkinter depende da distribuição do Python instalada.
 
-**Limite:** este módulo calcula os indicadores, mas não deve manter uma segunda cópia independente do histórico nem ser responsável por salvar os dados.
+## 6. Instalação e execução
 
-### `persistencia.py` — leitura e gravação dos dados
+### 6.1. Obter o código-fonte
 
-Responsável por carregar e salvar os dados locais da aplicação, usando arquivos JSON.
+Clone o repositório:
 
-Deve contemplar:
-- ler os dados existentes ao iniciar a aplicação;
-- gravar alterações de matérias, tarefas, planejamento e histórico;
-- definir caminhos consistentes para os arquivos armazenados em `dados/`;
-- tratar a primeira execução, quando os arquivos ainda não existem;
-- lidar com arquivos vazios, inválidos ou com estrutura inesperada sem encerrar a aplicação de forma abrupta;
-- manter um formato de dados consistente para que os módulos consigam compartilhar informações.
+```bash
+git clone https://github.com/Pturchetti/Projeto-Organizador-Estudos.git
+```
 
-Os módulos devem combinar previamente quais dados serão salvos, quais campos cada registro terá e como os identificadores e associações serão representados.
+Entre na pasta do projeto:
 
-**Limite:** a persistência cuida da entrada e saída dos arquivos. As regras de cadastro, contagem de tempo e cálculo de estatísticas permanecem em seus respectivos módulos.
+```bash
+cd Projeto-Organizador-Estudos
+```
 
-## Organização das pastas
+### 6.2. Executar a aplicação
 
-- **`imagens/`** — imagens, ícones e outros recursos visuais usados nas telas.
-- **`fontes/`** — arquivos de fontes adicionais, caso sejam necessários.
-- **`dados/`** — arquivos JSON com os dados locais da aplicação. Arquivos de dados reais ou pessoais não devem ser adicionados ao repositório sem necessidade.
+Com o Python e o Tkinter instalados, execute:
 
-## Integração entre os módulos
+```bash
+python main.py
+```
 
-Para evitar incompatibilidades durante o desenvolvimento, a equipe deve combinar antes de integrar:
-- quais informações identificam uma matéria, uma tarefa, um período planejado e uma sessão de estudo;
-- como tarefas e sessões apontam para uma matéria;
-- quais funções e parâmetros cada módulo disponibilizará aos demais;
-- em que momentos os dados serão carregados e salvos;
-- como erros de validação e falhas de leitura/gravação serão comunicados à interface.
+Em ambientes nos quais o comando `python` não aponta para o Python 3, pode ser necessário utilizar `python3 main.py` no Linux e macOS ou `py main.py` no Windows.
 
-Uma divisão clara de responsabilidades ajuda a evitar que a mesma regra seja implementada em vários arquivos. A implementação pode ser simplificada conforme o tempo disponível, priorizando um fluxo completo e funcional em vez de recursos opcionais.
+A execução deve ser feita a partir do diretório principal do projeto, para que os caminhos relativos aos recursos e arquivos locais sejam resolvidos conforme esperado.
 
-## Tecnologias
+## 7. Armazenamento e privacidade
 
-- **Python** — linguagem da aplicação.
-- **Tkinter** — criação da interface gráfica.
-- **JSON** — armazenamento local dos dados.
+Os dados são armazenados localmente em arquivos JSON dentro da pasta `dados/`, conforme a organização adotada pela aplicação.
 
-Os arquivos Python estão inicialmente vazios. Este README descreve o escopo esperado, mas não contém implementação: as funcionalidades serão programadas pela equipe durante o desenvolvimento.
+Como o armazenamento é local, os dados não são automaticamente sincronizados entre computadores. A cópia do projeto para outra máquina também não garante a transferência dos registros existentes, que dependem dos arquivos locais correspondentes.
+
+Recomenda-se não publicar informações pessoais ou registros reais de estudantes no repositório. Arquivos de dados locais devem ser avaliados antes de qualquer envio ao GitHub.
+
+## 8. Contexto acadêmico
+
+O Organizador de Estudos foi desenvolvido por estudantes do **segundo semestre do curso de Engenharia de Computação da Universidade Federal de Santa Maria (UFSM)**, como parte das atividades da disciplina de **Projeto Integrador**.
+
+O projeto tem como objetivo aplicar, de forma prática, os conhecimentos adquiridos ao longo da formação acadêmica, por meio do desenvolvimento colaborativo de uma aplicação desktop voltada à organização da rotina de estudos.
+
+Sua implementação envolve conceitos fundamentais de desenvolvimento de software, incluindo programação, modularização, desenvolvimento de interfaces gráficas, manipulação de dados, persistência local e integração entre componentes.
+
+Além do aprendizado técnico, a proposta busca relacionar os conhecimentos da Engenharia de Computação à solução de uma necessidade cotidiana dos estudantes.
+
+## 9. Licença
+
+O repositório ainda não possui uma licença de software especificada. As condições de uso, modificação e redistribuição do código deverão ser definidas pelos responsáveis pelo projeto.
+
+---
+
+Desenvolvido no contexto da graduação em Engenharia de Computação da Universidade Federal de Santa Maria (UFSM), para a disciplina de Projeto Integrador no segundo semestre.
